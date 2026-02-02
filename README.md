@@ -71,7 +71,7 @@
 
 ## 联系方式
 
-邮箱：contact@example.com
+邮箱：583020764@qq.com
 
 ## 许可证
 
