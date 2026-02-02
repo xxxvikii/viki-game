@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吾家有女初长成 - AI驱动古风高自由度随机文字人生模拟器</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div id="loading" class="loading">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>正在加载游戏资源...</p>
+        </div>
+    </div>
+
+    <!-- 游戏主页 -->
+    <div id="game-home" class="game-home hidden">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="container">
+                <div class="navbar-logo">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/40c92ef8984b4404b680c09a893d9718~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203042932145B2B53FF02FA424548&rrcfp=f06b921b&x-expires=1772656196&x-signature=qEOUuXjVz9XiYtQ5hu1gYYFZB8c%3D" alt="游戏Logo" class="logo-img">
+                    <span class="logo-text">吾家有女初长成</span>
+                </div>
+                <div class="navbar-menu">
+                    <a href="#home" class="menu-item active" data-target="home-section">首页</a>
+                    <a href="#intro" class="menu-item" data-target="intro-section">游戏介绍</a>
+                    <a href="#api" class="menu-item" data-target="api-section">API配置</a>
+                    <a href="#author" class="menu-item" data-target="author-section">作者信息</a>
+                </div>
+                <div class="navbar-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">当前版本:</span>
+                        <span class="stat-value">v1.0.0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">服务状态:</span>
+                        <span class="stat-value status-online">在线</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">注册用户:</span>
+                        <span class="stat-value" id="user-count">1,234</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">角色总数:</span>
+                        <span class="stat-value" id="character-count">5,678</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">在线人数:</span>
+                        <span class="stat-value" id="online-count">123</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 封面展示区 -->
+        <section id="home-section" class="section home-section">
+            <div class="container">
+                <div class="carousel-container">
+                    <div class="carousel-slide active">
+                        <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/40c92ef8984b4404b680c09a893d9718~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203042932145B2B53FF02FA424548&rrcfp=f06b921b&x-expires=1772656196&x-signature=qEOUuXjVz9XiYtQ5hu1gYYFZB8c%3D" alt="游戏封面1" class="carousel-img">
+                        <div class="carousel-caption">
+                            <h2>五姐妹的温馨日常</h2>
+                            <p>体验古代家庭的欢乐与温暖</p>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="carousel-content">
+                            <h2>高自由度人生选择</h2>
+                            <p>从12岁到寿终正寝，每一个选择都将影响你的人生轨迹</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> 随机生成的家族设定</li>
+                                <li><i class="fas fa-check-circle"></i> 多样化的技能养成</li>
+                                <li><i class="fas fa-check-circle"></i> 丰富的婚恋选择</li>
+                                <li><i class="fas fa-check-circle"></i> 复杂的社交圈层</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="carousel-content">
+                            <h2>AI驱动剧情生成</h2>
+                            <p>每个选择都会触发独特的剧情发展，让你的人生故事更加丰富多彩</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> 智能剧情生成</li>
+                                <li><i class="fas fa-check-circle"></i> NPC"活人感"系统</li>
+                                <li><i class="fas fa-check-circle"></i> 动态事件链</li>
+                                <li><i class="fas fa-check-circle"></i> 个性化结局</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="carousel-controls">
+                        <button class="carousel-prev" onclick="changeSlide(-1)">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="carousel-indicators">
+                            <span class="indicator active" onclick="goToSlide(0)"></span>
+                            <span class="indicator" onclick="goToSlide(1)"></span>
+                            <span class="indicator" onclick="goToSlide(2)"></span>
+                        </div>
+                        <button class="carousel-next" onclick="changeSlide(1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="game-buttons">
+                    <button class="btn btn-primary" onclick="startNewGame()">开始新游戏</button>
+                    <button class="btn btn-secondary" onclick="loadGame()">读取存档</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 游戏介绍区 -->
+        <section id="intro-section" class="section intro-section hidden">
+            <div class="container">
+                <h2 class="section-title">游戏介绍</h2>
+                <div class="intro-content">
+                    <div class="intro-card">
+                        <h3><i class="fas fa-gamepad"></i> 游戏概述</h3>
+                        <p>《吾家有女初长成》是一款基于古代/民国初期背景的文字人生模拟游戏。玩家将以五位女儿中任意一位为第一视角，沉浸式体验从12岁到寿终正寝的完整人生。</p>
+                    </div>
+                    <div class="intro-card">
+                        <h3><i class="fas fa-heart"></i> 核心玩法</h3>
+                        <ul>
+                            <li><strong>家庭日常</strong>：体验古代家庭的日常生活，与家人互动</li>
+                            <li><strong>姐妹互动</strong>：与四位姐妹建立深厚的感情</li>
+                            <li><strong>技能养成</strong>：学习诗词、女红、烹饪等古代女子必备技能</li>
+                            <li><strong>婚恋选择</strong>：经历媒妁之言或自由恋爱，选择自己的人生伴侣</li>
+                            <li><strong>社交圈层</strong>：与不同阶层的人物交往，扩展自己的社交圈</li>
+                        </ul>
+                    </div>
+                    <div class="intro-card">
+                        <h3><i class="fas fa-star"></i> 游戏特色</h3>
+                        <ul>
+                            <li><strong>高自由度抉择</strong>：每个选择都会影响人生走向</li>
+                            <li><strong>剧情随机性</strong>：每次游戏体验都不同</li>
+                            <li><strong>NPC"活人感"</strong>：NPC具备独立人格和人生轨迹</li>
+                            <li><strong>AI驱动剧情</strong>：通过API接入实现智能剧情生成</li>
+                            <li><strong>温馨喜剧风格</strong>：主打轻松愉快的游戏体验</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API配置区 -->
+        <section id="api-section" class="section api-section hidden">
+            <div class="container">
+                <h2 class="section-title">API配置</h2>
+                <div class="api-config">
+                    <div class="api-providers">
+                        <h3>选择API服务商</h3>
+                        <div class="provider-options">
+                            <label class="provider-option">
+                                <input type="radio" name="api-provider" value="deepseek" checked>
+                                <span class="provider-name">Deepseek</span>
+                            </label>
+                            <label class="provider-option">
+                                <input type="radio" name="api-provider" value="huoshan">
+                                <span class="provider-name">火山</span>
+                            </label>
+                            <label class="provider-option">
+                                <input type="radio" name="api-provider" value="openai">
+                                <span class="provider-name">OpenAI</span>
+                            </label>
+                            <label class="provider-option">
+                                <input type="radio" name="api-provider" value="guiji">
+                                <span class="provider-name">硅基流动</span>
+                            </label>
+                            <label class="provider-option">
+                                <input type="radio" name="api-provider" value="custom">
+                                <span class="provider-name">自定义模型</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="api-settings">
+                        <div class="setting-group">
+                            <label for="api-key">API密钥</label>
+                            <input type="password" id="api-key" placeholder="请输入API密钥" class="api-input">
+                        </div>
+                        <div class="setting-group">
+                            <label for="api-model">模型选择</label>
+                            <select id="api-model" class="api-select">
+                                <option value="deepseek-vl">DeepSeek-VL</option>
+                                <option value="deepseek-llm">DeepSeek-LLM</option>
+                                <option value="deepseek-v3.2">DeepSeek-V3.2</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label for="api-url">API地址</label>
+                            <input type="text" id="api-url" placeholder="请输入API地址" class="api-input" value="https://api.deepseek.com/v1/chat/completions">
+                        </div>
+                        <div class="setting-actions">
+                            <button class="btn btn-primary" onclick="saveApiConfig()">保存配置</button>
+                            <button class="btn btn-secondary" onclick="testApiConnection()">测试连接</button>
+                        </div>
+                    </div>
+                    <div class="api-status" id="api-status"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 作者信息区 -->
+        <section id="author-section" class="section author-section hidden">
+            <div class="container">
+                <h2 class="section-title">作者信息</h2>
+                <div class="author-info">
+                    <div class="author-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="author-details">
+                        <h3>西一</h3>
+                        <p>资深前端开发工程师，热爱文字游戏和AI技术。致力于将AI技术与传统文字游戏相结合，创造出更加丰富、智能的游戏体验。</p>
+                        <div class="author-social">
+                            <a href="#" class="social-link"><i class="fab fa-github"></i> GitHub</a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i> Twitter</a>
+                            <a href="#" class="social-link"><i class="fas fa-envelope"></i> 邮箱</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="game-updates">
+                    <h3>游戏更新日志</h3>
+                    <div class="update-item">
+                        <span class="update-date">2024-01-15</span>
+                        <div class="update-content">
+                            <h4>v1.0.0 正式版发布</h4>
+                            <ul>
+                                <li>完成游戏核心功能开发</li>
+                                <li>实现AI驱动剧情生成</li>
+                                <li>添加存档读档系统</li>
+                                <li>优化用户界面和交互体验</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 提示弹窗 -->
+    <div id="toast" class="toast hidden">
+        <div class="toast-content">
+            <i class="fas fa-check-circle toast-icon success"></i>
+            <span class="toast-message">操作成功</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="api.js"></script>
+    <script src="save-load.js"></script>
+</body>
+</html>

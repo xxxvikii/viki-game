@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>角色创建 - 吾家有女初长成</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div id="loading" class="loading">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>正在生成角色信息...</p>
+        </div>
+    </div>
+
+    <!-- 角色创建页面 -->
+    <div id="create-role" class="create-role hidden">
+        <div class="container">
+            <div class="page-header">
+                <h1>角色创建</h1>
+                <p>随机生成你的家族设定和角色信息</p>
+            </div>
+
+            <!-- 家族随机设定 -->
+            <div class="section-card family-section">
+                <h2 class="section-title">
+                    <i class="fas fa-home"></i> 家族设定
+                </h2>
+                <div class="family-info">
+                    <div class="info-group">
+                        <label>朝代:</label>
+                        <span id="dynasty">清朝</span>
+                    </div>
+                    <div class="info-group">
+                        <label>年号:</label>
+                        <span id="reign-year">乾隆</span>
+                    </div>
+                    <div class="info-group">
+                        <label>姓氏:</label>
+                        <span id="family-name">张</span>
+                    </div>
+                    <div class="info-group">
+                        <label>身份:</label>
+                        <span id="family-status">书香门第</span>
+                    </div>
+                    <div class="info-group">
+                        <label>资产:</label>
+                        <span id="family-wealth">中等</span>
+                    </div>
+                    <div class="info-group">
+                        <label>家风:</label>
+                        <span id="family-culture">诗书传家</span>
+                    </div>
+                </div>
+                <div class="section-actions">
+                    <button class="btn btn-secondary" onclick="regenerateFamily()">
+                        <i class="fas fa-redo"></i> 重新随机
+                    </button>
+                </div>
+            </div>
+
+            <!-- 主角随机信息 -->
+            <div class="section-card protagonist-section">
+                <h2 class="section-title">
+                    <i class="fas fa-user"></i> 主角信息
+                </h2>
+                <div class="protagonist-info">
+                    <div class="info-group">
+                        <label>排行:</label>
+                        <span id="protagonist-rank">三女</span>
+                    </div>
+                    <div class="info-group">
+                        <label>姓名/闺名:</label>
+                        <span id="protagonist-name">张昭昭</span>
+                    </div>
+                    <div class="info-group">
+                        <label>容貌:</label>
+                        <div class="attribute-bar">
+                            <div class="attribute-fill" id="appearance-bar" style="width: 70%"></div>
+                            <span class="attribute-value">70</span>
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <label>性格:</label>
+                        <span id="protagonist-personality">温柔体贴</span>
+                    </div>
+                    <div class="info-group">
+                        <label>初始技能:</label>
+                        <div class="skills-list" id="initial-skills">
+                            <div class="skill-item">
+                                <span class="skill-name">诗词</span>
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 30%"></div>
+                                    <span class="attribute-value">30</span>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">女红</span>
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 45%"></div>
+                                    <span class="attribute-value">45</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-group">
+                        <label>隐性属性:</label>
+                        <div class="hidden-attributes" id="hidden-attributes">
+                            <div class="attribute-item">
+                                <span class="attribute-name">福缘</span>
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 60%"></div>
+                                    <span class="attribute-value">60</span>
+                                </div>
+                            </div>
+                            <div class="attribute-item">
+                                <span class="attribute-name">智慧</span>
+                                <div class="attribute-bar">
+                                    <div class="attribute-fill" style="width: 75%"></div>
+                                    <span class="attribute-value">75</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-actions">
+                    <button class="btn btn-secondary" onclick="regenerateProtagonist()">
+                        <i class="fas fa-redo"></i> 重新随机
+                    </button>
+                </div>
+            </div>
+
+            <!-- 核心NPC随机初始信息 -->
+            <div class="section-card npc-section">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i> 家族成员
+                </h2>
+                <div class="npc-tabs">
+                    <button class="npc-tab active" data-target="parents-tab">父母</button>
+                    <button class="npc-tab" data-target="sisters-tab">姐妹</button>
+                </div>
+                <div class="npc-content">
+                    <!-- 父母信息 -->
+                    <div id="parents-tab" class="npc-tab-content active">
+                        <div class="npc-list" id="parents-list">
+                            <div class="npc-item">
+                                <div class="npc-header">
+                                    <h3>父亲 - 张明远</h3>
+                                    <span class="npc-age">45岁</span>
+                                </div>
+                                <div class="npc-details">
+                                    <div class="npc-info">
+                                        <p><strong>身份:</strong> 翰林院编修</p>
+                                        <p><strong>性格:</strong> 严肃认真</p>
+                                        <p><strong>与主角关系:</strong> 疼爱有加</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="npc-item">
+                                <div class="npc-header">
+                                    <h3>母亲 - 李氏</h3>
+                                    <span class="npc-age">40岁</span>
+                                </div>
+                                <div class="npc-details">
+                                    <div class="npc-info">
+                                        <p><strong>身份:</strong> 世家小姐</p>
+                                        <p><strong>性格:</strong> 贤良淑德</p>
+                                        <p><strong>与主角关系:</strong> 亲近</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 姐妹信息 -->
+                    <div id="sisters-tab" class="npc-tab-content">
+                        <div class="npc-list" id="sisters-list">
+                            <div class="npc-item">
+                                <div class="npc-header">
+                                    <h3>大姐 - 张昭华</h3>
+                                    <span class="npc-age">18岁</span>
+                                </div>
+                                <div class="npc-details">
+                                    <div class="npc-info">
+                                        <p><strong>性格:</strong> 端庄大方</p>
+                                        <p><strong>技能:</strong> 女红(85), 烹饪(70)</p>
+                                        <p><strong>与主角关系:</strong> 关爱</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="npc-item">
+                                <div class="npc-header">
+                                    <h3>二姐 - 张昭仪</h3>
+                                    <span class="npc-age">16岁</span>
+                                </div>
+                                <div class="npc-details">
+                                    <div class="npc-info">
+                                        <p><strong>性格:</strong> 活泼开朗</p>
+                                        <p><strong>技能:</strong> 诗词(75), 歌舞(80)</p>
+                                        <p><strong>与主角关系:</strong> 亲密</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="npc-item">
+                                <div class="npc-header">
+                                    <h3>四妹 - 张昭宁</h3>
+                                    <span class="npc-age">10岁</span>
+                                </div>
+                                <div class="npc-details">
+                                    <div class="npc-info">
+                                        <p><strong>性格:</strong> 天真可爱</p>
+                                        <p><strong>技能:</strong> 绘画(60), 书法(50)</p>
+                                        <p><strong>与主角关系:</strong> 依赖</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="npc-item">
+                                <div class="npc-header">
+                                    <h3>五妹 - 张昭惠</h3>
+                                    <span class="npc-age">8岁</span>
+                                </div>
+                                <div class="npc-details">
+                                    <div class="npc-info">
+                                        <p><strong>性格:</strong> 聪明伶俐</p>
+                                        <p><strong>技能:</strong> 读书(65), 算术(70)</p>
+                                        <p><strong>与主角关系:</strong> 友好</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-actions">
+                    <button class="btn btn-secondary" onclick="regenerateNPCs()">
+                        <i class="fas fa-redo"></i> 重新随机
+                    </button>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="page-actions">
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i> 返回主页
+                </button>
+                <button class="btn btn-primary" onclick="confirmCharacter()">
+                    <i class="fas fa-check"></i> 确认进入游戏
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示弹窗 -->
+    <div id="toast" class="toast hidden">
+        <div class="toast-content">
+            <i class="fas fa-check-circle toast-icon success"></i>
+            <span class="toast-message">操作成功</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示加载动画
+            showLoading();
+            
+            // 模拟加载过程
+            setTimeout(function() {
+                // 隐藏加载动画，显示页面
+                hideLoading();
+                document.getElementById('create-role').classList.remove('hidden');
+                
+                // 初始化角色信息
+                initializeCharacterCreation();
+            }, 1500);
+            
+            // 绑定NPC标签切换事件
+            const npcTabs = document.querySelectorAll('.npc-tab');
+            npcTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有标签的active类
+                    npcTabs.forEach(t => t.classList.remove('active'));
+                    // 添加当前标签的active类
+                    this.classList.add('active');
+                    
+                    // 隐藏所有内容
+                    const tabContents = document.querySelectorAll('.npc-tab-content');
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // 显示对应内容
+                    const targetId = this.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+        
+        // 初始化角色创建页面
+        function initializeCharacterCreation() {
+            // 生成家族信息
+            generateFamilyInfo();
+            
+            // 生成主角信息
+            generateProtagonistInfo();
+            
+            // 生成NPC信息
+            generateNPCInfo();
+        }
+        
+        // 生成家族信息
+        function generateFamilyInfo() {
+            // 朝代列表
+            const dynasties = ['唐朝', '宋朝', '元朝', '明朝', '清朝', '民国初期'];
+            
+            // 年号列表（按朝代分类）
+            const reignYears = {
+                '唐朝': ['贞观', '开元', '天宝', '元和', '大中'],
+                '宋朝': ['建隆', '太平兴国', '雍熙', '端拱', '淳化', '咸平', '景德', '大中祥符'],
+                '元朝': ['至元', '元贞', '大德', '至大', '皇庆', '延祐', '至治', '泰定'],
+                '明朝': ['洪武', '建文', '永乐', '洪熙', '宣德', '正统', '景泰', '天顺'],
+                '清朝': ['顺治', '康熙', '雍正', '乾隆', '嘉庆', '道光', '咸丰', '同治', '光绪', '宣统'],
+                '民国初期': ['民国元年', '民国二年', '民国三年', '民国四年', '民国五年']
+            };
+            
+            // 姓氏列表
+            const familyNames = ['张', '王', '李', '赵', '陈', '刘', '杨', '黄', '周', '吴'];
+            
+            // 身份列表
+            const familyStatuses = ['书香门第', '官宦之家', '商贾巨富', '武林世家', '农家小康', '医道世家', '梨园子弟'];
+            
+            // 资产列表
+            const familyWealth = ['贫穷', '小康', '中等', '富裕', '巨富'];
+            
+            // 家风列表
+            const familyCultures = ['诗书传家', '忠君爱国', '重商轻文', '尚武精神', '耕读传家', '悬壶济世', '艺术传家'];
+            
+            // 随机选择
+            const dynasty = dynasties[Math.floor(Math.random() * dynasties.length)];
+            const reignYear = reignYears[dynasty][Math.floor(Math.random() * reignYears[dynasty].length)];
+            const familyName = familyNames[Math.floor(Math.random() * familyNames.length)];
+            const familyStatus = familyStatuses[Math.floor(Math.random() * familyStatuses.length)];
+            const wealth = familyWealth[Math.floor(Math.random() * familyWealth.length)];
+            const culture = familyCultures[Math.floor(Math.random() * familyCultures.length)];
+            
+            // 更新页面
+            document.getElementById('dynasty').textContent = dynasty;
+            document.getElementById('reign-year').textContent = reignYear;
+            document.getElementById('family-name').textContent = familyName;
+            document.getElementById('family-status').textContent = familyStatus;
+            document.getElementById('family-wealth').textContent = wealth;
+            document.getElementById('family-culture').textContent = culture;
+            
+            // 保存到全局变量
+            window.gameData = window.gameData || {};
+            window.gameData.family = {
+                dynasty,
+                reignYear,
+                familyName,
+                familyStatus,
+                wealth,
+                culture
+            };
+        }
+        
+        // 生成主角信息
+        function generateProtagonistInfo() {
+            // 排行列表
+            const ranks = ['长女', '次女', '三女', '四女', '五女'];
+            
+            // 闺名列表
+            const girlNames = ['昭华', '昭仪', '昭昭', '昭宁', '昭惠', '昭容', '昭媛', '昭德', '昭文', '昭懿'];
+            
+            // 性格列表
+            const personalities = [
+                '温柔体贴', '活泼开朗', '端庄大方', '聪明伶俐', '天真可爱',
+                '沉稳内敛', '机智过人', '善解人意', '独立自主', '多愁善感'
+            ];
+            
+            // 技能列表
+            const skills = ['诗词', '女红', '烹饪', '歌舞', '绘画', '书法', '算术', '医术', '弈棋', '茶艺'];
+            
+            // 随机选择
+            const rank = ranks[Math.floor(Math.random() * ranks.length)];
+            const name = girlNames[Math.floor(Math.random() * girlNames.length)];
+            const appearance = Math.floor(Math.random() * 51) + 50; // 50-100
+            const personality = personalities[Math.floor(Math.random() * personalities.length)];
+            
+            // 随机选择2-3个初始技能
+            const skillCount = Math.floor(Math.random() * 2) + 2; // 2-3个技能
+            const initialSkills = [];
+            
+            for (let i = 0; i < skillCount; i++) {
+                const skill = skills[Math.floor(Math.random() * skills.length)];
+                if (!initialSkills.some(s => s.name === skill)) {
+                    initialSkills.push({
+                        name: skill,
+                        level: Math.floor(Math.random() * 31) + 20 // 20-50
+                    });
+                }
+            }
+            
+            // 隐性属性
+            const luck = Math.floor(Math.random() * 61) + 40; // 40-100
+            const wisdom = Math.floor(Math.random() * 61) + 40; // 40-100
+            
+            // 更新页面
+            document.getElementById('protagonist-rank').textContent = rank;
+            document.getElementById('protagonist-name').textContent = window.gameData.family.familyName + name;
+            document.getElementById('appearance-bar').style.width = `${appearance}%`;
+            document.getElementById('appearance-bar').nextElementSibling.textContent = appearance;
+            document.getElementById('protagonist-personality').textContent = personality;
+            
+            // 更新技能列表
+            const skillsList = document.getElementById('initial-skills');
+            skillsList.innerHTML = '';
+            
+            initialSkills.forEach(skill => {
+                const skillItem = document.createElement('div');
+                skillItem.className = 'skill-item';
+                skillItem.innerHTML = `
+                    <span class="skill-name">${skill.name}</span>
+                    <div class="attribute-bar">
+                        <div class="attribute-fill" style="width: ${skill.level}%"></div>
+                        <span class="attribute-value">${skill.level}</span>
+                    </div>
+                `;
+                skillsList.appendChild(skillItem);
+            });
+            
+            // 更新隐性属性
+            const hiddenAttributes = document.getElementById('hidden-attributes');
+            hiddenAttributes.innerHTML = `
+                <div class="attribute-item">
+                    <span class="attribute-name">福缘</span>
+                    <div class="attribute-bar">
+                        <div class="attribute-fill" style="width: ${luck}%"></div>
+                        <span class="attribute-value">${luck}</span>
+                    </div>
+                </div>
+                <div class="attribute-item">
+                    <span class="attribute-name">智慧</span>
+                    <div class="attribute-bar">
+                        <div class="attribute-fill" style="width: ${wisdom}%"></div>
+                        <span class="attribute-value">${wisdom}</span>
+                    </div>
+                </div>
+            `;
+            
+            // 保存到全局变量
+            window.gameData.protagonist = {
+                rank,
+                name: window.gameData.family.familyName + name,
+                appearance,
+                personality,
+                skills: initialSkills,
+                hiddenAttributes: {
+                    luck,
+                    wisdom
+                },
+                age: 12,
+                health: 100,
+                emotion: 100
+            };
+        }
+        
+        // 生成NPC信息
+        function generateNPCInfo() {
+            const familyName = window.gameData.family.familyName;
+            
+            // 生成父母信息
+            generateParentsInfo(familyName);
+            
+            // 生成姐妹信息
+            generateSistersInfo(familyName);
+        }
+        
+        // 生成父母信息
+        function generateParentsInfo(familyName) {
+            // 父亲身份列表
+            const fatherJobs = [
+                '翰林院编修', '吏部尚书', '户部侍郎', '兵部主事', '刑部郎中',
+                '工部员外郎', '地方知府', '知县', '将军', '商人', '教书先生',
+                '医生', '武林高手', '画师', '书法家'
+            ];
+            
+            // 母亲身份列表
+            const motherJobs = [
+                '世家小姐', '官宦之女', '商贾之女', '书香门第', '农家女',
+                '医家之女', '武林世家', '梨园名角', '才女', '贤妻良母'
+            ];
+            
+            // 性格列表
+            const fatherPersonalities = [
+                '严肃认真', '和蔼可亲', '严厉苛刻', '温文尔雅', '豪爽大方',
+                '沉默寡言', '幽默风趣', '固执己见', '公正无私', '慈爱'
+            ];
+            
+            const motherPersonalities = [
+                '贤良淑德', '温柔体贴', '精明能干', '严厉', '慈祥',
+                '善解人意', '多愁善感', '坚强', '软弱', '唠叨'
+            ];
+            
+            // 关系列表
+            const relationships = ['疼爱有加', '亲近', '一般', '严厉', '疏离'];
+            
+            // 随机选择
+            const fatherName = familyName + '明' + ['远', '达', '志', '德', '才', '学'][Math.floor(Math.random() * 6)];
+            const fatherAge = Math.floor(Math.random() * 15) + 35; // 35-50岁
+            const fatherJob = fatherJobs[Math.floor(Math.random() * fatherJobs.length)];
+            const fatherPersonality = fatherPersonalities[Math.floor(Math.random() * fatherPersonalities.length)];
+            const fatherRelationship = relationships[Math.floor(Math.random() * relationships.length)];
+            
+            const motherSurname = ['李', '王', '张', '刘', '陈', '杨', '赵', '黄', '周', '吴'][Math.floor(Math.random() * 10)];
+            const motherName = motherSurname + '氏';
+            const motherAge = Math.floor(Math.random() * 10) + 30; // 30-40岁
+            const motherJob = motherJobs[Math.floor(Math.random() * motherJobs.length)];
+            const motherPersonality = motherPersonalities[Math.floor(Math.random() * motherPersonalities.length)];
+            const motherRelationship = relationships[Math.floor(Math.random() * relationships.length)];
+            
+            // 更新页面
+            const parentsList = document.getElementById('parents-list');
+            parentsList.innerHTML = `
+                <div class="npc-item">
+                    <div class="npc-header">
+                        <h3>父亲 - ${fatherName}</h3>
+                        <span class="npc-age">${fatherAge}岁</span>
+                    </div>
+                    <div class="npc-details">
+                        <div class="npc-info">
+                            <p><strong>身份:</strong> ${fatherJob}</p>
+                            <p><strong>性格:</strong> ${fatherPersonality}</p>
+                            <p><strong>与主角关系:</strong> ${fatherRelationship}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="npc-item">
+                    <div class="npc-header">
+                        <h3>母亲 - ${motherName}</h3>
+                        <span class="npc-age">${motherAge}岁</span>
+                    </div>
+                    <div class="npc-details">
+                        <div class="npc-info">
+                            <p><strong>身份:</strong> ${motherJob}</p>
+                            <p><strong>性格:</strong> ${motherPersonality}</p>
+                            <p><strong>与主角关系:</strong> ${motherRelationship}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 保存到全局变量
+            window.gameData.parents = [
+                {
+                    name: fatherName,
+                    age: fatherAge,
+                    job: fatherJob,
+                    personality: fatherPersonality,
+                    relationship: fatherRelationship,
+                    role: 'father'
+                },
+                {
+                    name: motherName,
+                    age: motherAge,
+                    job: motherJob,
+                    personality: motherPersonality,
+                    relationship: motherRelationship,
+                    role: 'mother'
+                }
+            ];
+        }
+        
+        // 生成姐妹信息
+        function generateSistersInfo(familyName) {
+            // 闺名列表
+            const girlNames = ['昭华', '昭仪', '昭昭', '昭宁', '昭惠', '昭容', '昭媛', '昭德', '昭文', '昭懿'];
+            
+            // 性格列表
+            const personalities = [
+                '温柔体贴', '活泼开朗', '端庄大方', '聪明伶俐', '天真可爱',
+                '沉稳内敛', '机智过人', '善解人意', '独立自主', '多愁善感'
+            ];
+            
+            // 技能列表
+            const skills = ['诗词', '女红', '烹饪', '歌舞', '绘画', '书法', '算术', '医术', '弈棋', '茶艺'];
+            
+            // 关系列表
+            const relationships = ['关爱', '亲密', '一般', '疏远', '敌对'];
+            
+            // 主角排行
+            const protagonistRank = window.gameData.protagonist.rank;
+            const rankIndex = ['长女', '次女', '三女', '四女', '五女'].indexOf(protagonistRank);
+            
+            // 生成姐妹信息
+            const sisters = [];
+            
+            // 生成比主角大的姐妹
+            for (let i = 0; i < rankIndex; i++) {
+                const name = familyName + girlNames[i];
+                const age = 12 + (rankIndex - i) * 2; // 比主角大2-6岁
+                const personality = personalities[Math.floor(Math.random() * personalities.length)];
+                
+                // 随机选择2个技能
+                const sisterSkills = [];
+                for (let j = 0; j < 2; j++) {
+                    const skill = skills[Math.floor(Math.random() * skills.length)];
+                    if (!sisterSkills.some(s => s.name === skill)) {
+                        sisterSkills.push({
+                            name: skill,
+                            level: Math.floor(Math.random() * 41) + 40 // 40-80
+                        });
+                    }
+                }
+                
+                const relationship = relationships[Math.floor(Math.random() * relationships.length)];
+                
+                sisters.push({
+                    name,
+                    age,
+                    personality,
+                    skills: sisterSkills,
+                    relationship,
+                    rank: ['长女', '次女', '三女', '四女', '五女'][i],
+                    role: 'sister'
+                });
+            }
+            
+            // 生成比主角小的姐妹
+            for (let i = rankIndex + 1; i < 5; i++) {
+                const name = familyName + girlNames[i];
+                const age = 12 - (i - rankIndex) * 2; // 比主角小2-6岁
+                const personality = personalities[Math.floor(Math.random() * personalities.length)];
+                
+                // 随机选择2个技能
+                const sisterSkills = [];
+                for (let j = 0; j < 2; j++) {
+                    const skill = skills[Math.floor(Math.random() * skills.length)];
+                    if (!sisterSkills.some(s => s.name === skill)) {
+                        sisterSkills.push({
+                            name: skill,
+                            level: Math.floor(Math.random() * 31) + 20 // 20-50
+                        });
+                    }
+                }
+                
+                const relationship = relationships[Math.floor(Math.random() * relationships.length)];
+                
+                sisters.push({
+                    name,
+                    age,
+                    personality,
+                    skills: sisterSkills,
+                    relationship,
+                    rank: ['长女', '次女', '三女', '四女', '五女'][i],
+                    role: 'sister'
+                });
+            }
+            
+            // 更新页面
+            const sistersList = document.getElementById('sisters-list');
+            sistersList.innerHTML = '';
+            
+            sisters.forEach(sister => {
+                const sisterItem = document.createElement('div');
+                sisterItem.className = 'npc-item';
+                
+                let skillsHtml = '';
+                sister.skills.forEach(skill => {
+                    skillsHtml += `${skill.name}(${skill.level}), `;
+                });
+                skillsHtml = skillsHtml.slice(0, -2);
+                
+                sisterItem.innerHTML = `
+                    <div class="npc-header">
+                        <h3>${sister.rank} - ${sister.name}</h3>
+                        <span class="npc-age">${sister.age}岁</span>
+                    </div>
+                    <div class="npc-details">
+                        <div class="npc-info">
+                            <p><strong>性格:</strong> ${sister.personality}</p>
+                            <p><strong>技能:</strong> ${skillsHtml}</p>
+                            <p><strong>与主角关系:</strong> ${sister.relationship}</p>
+                        </div>
+                    </div>
+                `;
+                
+                sistersList.appendChild(sisterItem);
+            });
+            
+            // 保存到全局变量
+            window.gameData.sisters = sisters;
+        }
+        
+        // 重新生成家族信息
+        function regenerateFamily() {
+            showToast('正在重新生成家族信息...', 'info');
+            setTimeout(() => {
+                generateFamilyInfo();
+                // 重新生成主角和NPC信息，因为家族姓氏可能改变
+                generateProtagonistInfo();
+                generateNPCInfo();
+                showToast('家族信息重新生成成功！', 'success');
+            }, 500);
+        }
+        
+        // 重新生成主角信息
+        function regenerateProtagonist() {
+            showToast('正在重新生成主角信息...', 'info');
+            setTimeout(() => {
+                generateProtagonistInfo();
+                showToast('主角信息重新生成成功！', 'success');
+            }, 500);
+        }
+        
+        // 重新生成NPC信息
+        function regenerateNPCs() {
+            showToast('正在重新生成NPC信息...', 'info');
+            setTimeout(() => {
+                generateNPCInfo();
+                showToast('NPC信息重新生成成功！', 'success');
+            }, 500);
+        }
+        
+        // 确认角色并进入游戏
+        function confirmCharacter() {
+            showToast('正在保存角色信息...', 'info');
+            
+            // 初始化游戏数据
+            initializeGameData();
+            
+            // 保存游戏数据
+            saveGame(1);
+            
+            setTimeout(() => {
+                showToast('角色创建成功！正在进入游戏...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'game.html';
+                }, 1000);
+            }, 1000);
+        }
+        
+        // 初始化游戏数据
+        function initializeGameData() {
+            // 确保gameData存在
+            window.gameData = window.gameData || {};
+            
+            // 初始化时间
+            window.gameData.time = {
+                year: 1, // 游戏内第一年
+                season: '春季', // 初始季节
+                month: 1, // 初始月份
+                day: 1 // 初始日期
+            };
+            
+            // 初始化事件记录
+            window.gameData.events = [];
+            
+            // 初始化资产
+            const wealthLevel = ['贫穷', '小康', '中等', '富裕', '巨富'].indexOf(window.gameData.family.wealth);
+            window.gameData.assets = {
+                money: (wealthLevel + 1) * 100, // 100-500两银子
+                properties: [],
+                jewelry: [],
+                clothes: []
+            };
+            
+            // 初始化关系网
+            window.gameData.relationships = {
+                family: [],
+                friends: [],
+                acquaintances: [],
+                enemies: []
+            };
+            
+            // 添加父母和姐妹到关系网
+            window.gameData.parents.forEach(parent => {
+                window.gameData.relationships.family.push({
+                    name: parent.name,
+                    type: parent.role === 'father' ? '父亲' : '母亲',
+                    intimacy: Math.floor(Math.random() * 31) + 70, // 70-100
+                    lastInteraction: 0
+                });
+            });
+            
+            window.gameData.sisters.forEach(sister => {
+                window.gameData.relationships.family.push({
+                    name: sister.name,
+                    type: sister.rank,
+                    intimacy: Math.floor(Math.random() * 51) + 50, // 50-100
+                    lastInteraction: 0
+                });
+            });
+            
+            // 初始化年度事件
+            window.gameData.yearlyEvents = [];
+            
+            // 初始化家庭动态
+            window.gameData.familyNews = [];
+            
+            // 初始化书信
+            window.gameData.letters = [];
+            
+            // 初始化成就
+            window.gameData.achievements = [];
+            
+            // 初始化家宅地图
+            window.gameData.homeMap = {
+                rooms: [
+                    { id: 'main_hall', name: '正厅', description: '家族聚会和接待客人的地方', events: [] },
+                    { id: 'bedroom', name: '闺房', description: '你的私人空间，可以休息和学习', events: [] },
+                    { id: 'garden', name: '花园', description: '家族花园，种植着各种花草树木', events: [] },
+                    { id: 'study', name: '书房', description: '存放书籍和学习的地方', events: [] },
+                    { id: 'kitchen', name: '厨房', description: '做饭和准备食物的地方', events: [] },
+                    { id: 'ancestral_hall', name: '祠堂', description: '供奉祖先牌位的地方', events: [] }
+                ]
+            };
+            
+            // 初始化游戏状态
+            window.gameData.gameState = {
+                currentScreen: 'home',
+                notifications: [],
+                activeQuests: [],
+                completedQuests: []
+            };
+        }
+    </script>
+</body>
+</html>
