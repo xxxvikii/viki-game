@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吾家有女初长成 - 古风高自由度随机文字人生模拟器</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B0000',
+                        secondary: '#DAA520',
+                        accent: '#4B0082',
+                        light: '#FFF8DC',
+                        dark: '#2F1B14',
+                        muted: '#8B7355'
+                    },
+                    fontFamily: {
+                        sans: ['Arial', 'sans-serif'],
+                        serif: ['SimSun', 'serif'],
+                        fangsong: ['FangSong', 'serif']
+                    },
+                    backgroundImage: {
+                        'paper-texture': "url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/60fa978bbd784dfcac8ae0169afe19c6~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203045819514EC00B7EA7083A27A1&rrcfp=f06b921b&x-expires=1772657949&x-signature=AL1XJoHmsM2FD59lRQE0VDMw%2BBE%3D')"
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            }
+            .text-shadow-sm {
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            }
+            .border-double-gold {
+                box-shadow: 0 0 0 2px #DAA520, 0 0 0 4px #FFF8DC;
+            }
+            .scrollbar-hidden::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hidden {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+        
+        /* 自定义动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        .animate-slideIn {
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s infinite;
+        }
+        
+        /* 古风按钮样式 */
+        .btn-ancient {
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .btn-ancient:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .btn-ancient:hover:before {
+            left: 100%;
+        }
+        
+        .btn-ancient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn-ancient:active {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* 轮播图样式 */
+        .carousel {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+        }
+        
+        /* 导航栏样式 */
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-item:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #DAA520;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-item:hover:after {
+            width: 100%;
+        }
+        
+        /* 数据面板样式 */
+        .data-panel {
+            background-color: rgba(255, 248, 220, 0.8);
+            border: 1px solid #DAA520;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-light font-serif text-dark min-h-screen">
+    <!-- 导航栏 -->
+    <header class="bg-dark bg-opacity-90 text-light shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/c5bebeb2fc574e3c800085855a208a97~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203045819514EC00B7EA7083A27A1&rrcfp=f06b921b&x-expires=1772657959&x-signature=kf2fmyIgXLpTymQz%2FFFjNnSVTi0%3D" alt="吾家有女初长成" class="h-12 mr-4">
+            </div>
+            
+            <!-- 导航链接 -->
+            <nav class="hidden md:flex space-x-8 text-lg">
+                <a href="#home" class="nav-item py-2 hover:text-secondary transition-colors duration-300">首页</a>
+                <a href="#intro" class="nav-item py-2 hover:text-secondary transition-colors duration-300">游戏介绍</a>
+                <a href="api-config.html" class="nav-item py-2 hover:text-secondary transition-colors duration-300">API接口配置</a>
+                <a href="#author" class="nav-item py-2 hover:text-secondary transition-colors duration-300">作者信息</a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="menu-toggle" class="md:hidden text-light focus:outline-none">
+                <i class="fa fa-bars text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-dark bg-opacity-95 text-light py-4 px-6 animate-fadeIn">
+            <nav class="flex flex-col space-y-4 text-lg">
+                <a href="#home" class="py-2 hover:text-secondary transition-colors duration-300">首页</a>
+                <a href="#intro" class="py-2 hover:text-secondary transition-colors duration-300">游戏介绍</a>
+                <a href="api-config.html" class="py-2 hover:text-secondary transition-colors duration-300">API接口配置</a>
+                <a href="#author" class="py-2 hover:text-secondary transition-colors duration-300">作者信息</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main>
+        <!-- 首页封面区 -->
+        <section id="home" class="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <div class="carousel h-full">
+                    <div class="carousel-inner h-full">
+                        <div class="carousel-item h-full bg-cover bg-center" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/60fa978bbd784dfcac8ae0169afe19c6~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203045819514EC00B7EA7083A27A1&rrcfp=f06b921b&x-expires=1772657949&x-signature=AL1XJoHmsM2FD59lRQE0VDMw%2BBE%3D')"></div>
+                        <div class="carousel-item h-full bg-cover bg-center" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/60fa978bbd784dfcac8ae0169afe19c6~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203045819514EC00B7EA7083A27A1&rrcfp=f06b921b&x-expires=1772657949&x-signature=AL1XJoHmsM2FD59lRQE0VDMw%2BBE%3D')"></div>
+                        <div class="carousel-item h-full bg-cover bg-center" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/60fa978bbd784dfcac8ae0169afe19c6~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203045819514EC00B7EA7083A27A1&rrcfp=f06b921b&x-expires=1772657949&x-signature=AL1XJoHmsM2FD59lRQE0VDMw%2BBE%3D')"></div>
+                    </div>
+                    
+                    <!-- 轮播控制按钮 -->
+                    <button class="carousel-control-prev absolute top-1/2 left-4 transform -translate-y-1/2 bg-dark bg-opacity-50 text-white rounded-full w-10 h-10 flex items-center justify-center focus:outline-none">
+                        <i class="fa fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-control-next absolute top-1/2 right-4 transform -translate-y-1/2 bg-dark bg-opacity-50 text-white rounded-full w-10 h-10 flex items-center justify-center focus:outline-none">
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+                    
+                    <!-- 轮播指示器 -->
+                    <div class="carousel-indicators absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                        <button class="w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none carousel-indicator active" data-index="0"></button>
+                        <button class="w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none carousel-indicator" data-index="1"></button>
+                        <button class="w-3 h-3 rounded-full bg-white bg-opacity-50 focus:outline-none carousel-indicator" data-index="2"></button>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-dark bg-opacity-40"></div>
+            </div>
+            
+            <div class="container mx-auto px-4 z-10 text-center">
+                <h1 class="text-5xl md:text-7xl font-bold text-light mb-6 text-shadow animate-fadeIn">
+                    吾家有女初长成
+                </h1>
+                <p class="text-xl md:text-2xl text-light mb-10 max-w-2xl mx-auto text-shadow-sm animate-slideIn">
+                    高自由度古风文字人生模拟器，体验从12岁到寿终正寝的完整人生
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 animate-slideIn" style="animation-delay: 0.3s;">
+                    <button id="start-game" class="btn-ancient bg-primary hover:bg-opacity-90 text-white text-xl py-3 px-8 rounded-lg border-2 border-secondary shadow-lg">
+                        开始游戏
+                    </button>
+                    <button id="load-game" class="btn-ancient bg-light hover:bg-opacity-90 text-primary text-xl py-3 px-8 rounded-lg border-2 border-secondary shadow-lg">
+                        读取存档
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 游戏介绍区 -->
+        <section id="intro" class="py-16 bg-light">
+            <div class="container mx-auto px-4">
+                <h2 class="text-4xl font-bold text-center mb-12 text-primary">游戏介绍</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 md:order-1">
+                        <h3 class="text-2xl font-bold mb-4 text-accent">游戏背景</h3>
+                        <p class="mb-6 text-lg">
+                            《吾家有女初长成》是一款基于古代/民国初期背景的高自由度文字人生模拟游戏。玩家将以五位女儿中任意一位为第一视角，沉浸式体验从12岁到寿终正寝的完整人生。
+                        </p>
+                        
+                        <h3 class="text-2xl font-bold mb-4 text-accent">核心玩法</h3>
+                        <ul class="list-disc list-inside space-y-2 mb-6 text-lg">
+                            <li>家庭日常与姐妹互动</li>
+                            <li>技能养成与个人成长</li>
+                            <li>婚恋选择与家庭建立</li>
+                            <li>社交圈层互动</li>
+                            <li>随机事件与命运抉择</li>
+                        </ul>
+                        
+                        <h3 class="text-2xl font-bold mb-4 text-accent">游戏特色</h3>
+                        <ul class="list-disc list-inside space-y-2 text-lg">
+                            <li>高自由度抉择系统</li>
+                            <li>剧情随机性与多样性</li>
+                            <li>NPC"活人感"系统</li>
+                            <li>AI驱动剧情生成</li>
+                            <li>完整的存档读档功能</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="order-1 md:order-2 flex justify-center">
+                        <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/60fa978bbd784dfcac8ae0169afe19c6~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203045819514EC00B7EA7083A27A1&rrcfp=f06b921b&x-expires=1772657949&x-signature=AL1XJoHmsM2FD59lRQE0VDMw%2BBE%3D" alt="游戏角色" class="rounded-lg shadow-xl max-w-full h-auto border-4 border-secondary animate-pulse-slow" style="max-height: 500px;">
+                    </div>
+                </div>
+                
+                <!-- 游戏特色卡片 -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-primary transform transition-transform hover:scale-105">
+                        <div class="text-primary text-4xl mb-4">
+                            <i class="fa fa-random"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-2">高自由度抉择</h4>
+                        <p class="text-muted">每个选择都会影响角色的人生轨迹，没有固定剧情，你的人生由你做主。</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-secondary transform transition-transform hover:scale-105">
+                        <div class="text-secondary text-4xl mb-4">
+                            <i class="fa fa-dice"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-2">剧情随机性</h4>
+                        <p class="text-muted">每次游戏体验都独一无二，随机事件和剧情让你的每次游玩都充满惊喜。</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-accent transform transition-transform hover:scale-105">
+                        <div class="text-accent text-4xl mb-4">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-2">NPC"活人感"</h4>
+                        <p class="text-muted">NPC拥有独立性格、情感和人生轨迹，会根据你的行为做出真实反应。</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-primary transform transition-transform hover:scale-105">
+                        <div class="text-primary text-4xl mb-4">
+                            <i class="fa fa-magic"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-2">AI驱动剧情</h4>
+                        <p class="text-muted">由AI生成丰富多样的剧情内容，确保每次游戏都有新鲜体验。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心数据面板 -->
+        <section class="py-12 bg-dark text-light">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-10">核心数据面板</h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="data-panel p-4 text-center">
+                        <h3 class="text-secondary mb-2">当前版本</h3>
+                        <p class="text-xl font-bold">v1.0.0</p>
+                    </div>
+                    
+                    <div class="data-panel p-4 text-center">
+                        <h3 class="text-secondary mb-2">服务状态</h3>
+                        <p class="text-xl font-bold text-green-400">正常</p>
+                    </div>
+                    
+                    <div class="data-panel p-4 text-center">
+                        <h3 class="text-secondary mb-2">注册用户</h3>
+                        <p class="text-xl font-bold" id="user-count">1,234</p>
+                    </div>
+                    
+                    <div class="data-panel p-4 text-center">
+                        <h3 class="text-secondary mb-2">角色总数</h3>
+                        <p class="text-xl font-bold" id="character-count">5,678</p>
+                    </div>
+                    
+                    <div class="data-panel p-4 text-center">
+                        <h3 class="text-secondary mb-2">在线人数</h3>
+                        <p class="text-xl font-bold" id="online-count">123</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 作者信息 -->
+        <section id="author" class="py-16 bg-light">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-4xl font-bold mb-10 text-primary">作者信息</h2>
+                
+                <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 border-2 border-secondary">
+                    <div class="w-24 h-24 rounded-full bg-primary text-white flex items-center justify-center text-4xl mx-auto mb-6">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    
+                    <h3 class="text-2xl font-bold mb-2">西一</h3>
+                    <p class="text-muted mb-6">游戏开发者 / 剧情设计</p>
+                    
+                    <p class="mb-6">
+                        热爱文字游戏和古风文化，希望通过《吾家有女初长成》为玩家带来一段温馨有趣的古风人生体验。
+                    </p>
+                    
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="text-primary hover:text-secondary transition-colors duration-300">
+                            <i class="fa fa-weibo text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-primary hover:text-secondary transition-colors duration-300">
+                            <i class="fa fa-wechat text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-primary hover:text-secondary transition-colors duration-300">
+                            <i class="fa fa-github text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-light py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p>&copy; 2026 吾家有女初长成 - 古风高自由度随机文字人生模拟器</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-secondary transition-colors duration-300">隐私政策</a>
+                    <a href="#" class="hover:text-secondary transition-colors duration-300">使用条款</a>
+                    <a href="#" class="hover:text-secondary transition-colors duration-300">联系我们</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 存档读取模态框 -->
+    <div id="load-game-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-light rounded-lg shadow-xl p-6 max-w-md w-full mx-4 animate-fadeIn">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-primary">读取存档</h3>
+                <button id="close-load-modal" class="text-muted hover:text-dark focus:outline-none">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="save-slot bg-white p-4 rounded-lg shadow border border-secondary cursor-pointer hover:bg-light transition-colors duration-300">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold">存档位 1</h4>
+                        <span class="text-sm text-muted">2026-02-03 14:30</span>
+                    </div>
+                    <p class="text-sm mt-2">主角：李梦华，年龄：16岁，朝代：清朝乾隆年间</p>
+                </div>
+                
+                <div class="save-slot bg-white p-4 rounded-lg shadow border border-secondary cursor-pointer hover:bg-light transition-colors duration-300">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold">存档位 2</h4>
+                        <span class="text-sm text-muted">2026-02-01 10:15</span>
+                    </div>
+                    <p class="text-sm mt-2">主角：张婉仪，年龄：22岁，朝代：民国初年</p>
+                </div>
+                
+                <div class="save-slot bg-white p-4 rounded-lg shadow border border-secondary cursor-pointer hover:bg-light transition-colors duration-300">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold">存档位 3</h4>
+                        <span class="text-sm text-muted">2026-01-28 18:45</span>
+                    </div>
+                    <p class="text-sm mt-2">主角：王雅琴，年龄：18岁，朝代：明朝嘉靖年间</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <button id="cancel-load" class="bg-muted hover:bg-opacity-80 text-white py-2 px-6 rounded-lg mr-4">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 交互反馈提示 -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-dark text-white py-2 px-4 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <span id="toast-message">操作成功</span>
+    </div>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单切换
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            menuToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // 如果是移动端，点击后关闭菜单
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+            
+            // 轮播图功能
+            const carousel = document.querySelector('.carousel');
+            const carouselInner = document.querySelector('.carousel-inner');
+            const carouselItems = document.querySelectorAll('.carousel-item');
+            const prevBtn = document.querySelector('.carousel-control-prev');
+            const nextBtn = document.querySelector('.carousel-control-next');
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            
+            let currentIndex = 0;
+            const itemCount = carouselItems.length;
+            
+            // 设置轮播图高度
+            function setCarouselHeight() {
+                const windowHeight = window.innerHeight;
+                carousel.style.height = `${windowHeight * 0.8}px`;
+            }
+            
+            setCarouselHeight();
+            window.addEventListener('resize', setCarouselHeight);
+            
+            // 切换轮播图
+            function goToSlide(index) {
+                if (index < 0) index = itemCount - 1;
+                if (index >= itemCount) index = 0;
+                
+                currentIndex = index;
+                carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // 更新指示器状态
+                indicators.forEach((indicator, i) => {
+                    if (i === currentIndex) {
+                        indicator.classList.add('active');
+                        indicator.classList.add('bg-white');
+                        indicator.classList.remove('bg-opacity-50');
+                    } else {
+                        indicator.classList.remove('active');
+                        indicator.classList.remove('bg-white');
+                        indicator.classList.add('bg-opacity-50');
+                    }
+                });
+            }
+            
+            // 下一张
+            nextBtn.addEventListener('click', () => {
+                goToSlide(currentIndex + 1);
+            });
+            
+            // 上一张
+            prevBtn.addEventListener('click', () => {
+                goToSlide(currentIndex - 1);
+            });
+            
+            // 点击指示器
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    goToSlide(index);
+                });
+            });
+            
+            // 自动轮播
+            let autoplayInterval = setInterval(() => {
+                goToSlide(currentIndex + 1);
+            }, 5000);
+            
+            // 鼠标悬停时暂停自动轮播
+            carousel.addEventListener('mouseenter', () => {
+                clearInterval(autoplayInterval);
+            });
+            
+            // 鼠标离开时恢复自动轮播
+            carousel.addEventListener('mouseleave', () => {
+                autoplayInterval = setInterval(() => {
+                    goToSlide(currentIndex + 1);
+                }, 5000);
+            });
+            
+            // 开始游戏按钮
+            const startGameBtn = document.getElementById('start-game');
+            startGameBtn.addEventListener('click', () => {
+                showToast('正在进入角色创建页面...');
+                setTimeout(() => {
+                    window.location.href = 'create-role.html';
+                }, 1000);
+            });
+            
+            // 读取存档按钮
+            const loadGameBtn = document.getElementById('load-game');
+            const loadGameModal = document.getElementById('load-game-modal');
+            const closeLoadModal = document.getElementById('close-load-modal');
+            const cancelLoad = document.getElementById('cancel-load');
+            const saveSlots = document.querySelectorAll('.save-slot');
+            
+            loadGameBtn.addEventListener('click', () => {
+                loadGameModal.classList.remove('hidden');
+            });
+            
+            closeLoadModal.addEventListener('click', () => {
+                loadGameModal.classList.add('hidden');
+            });
+            
+            cancelLoad.addEventListener('click', () => {
+                loadGameModal.classList.add('hidden');
+            });
+            
+            // 点击存档位
+            saveSlots.forEach((slot, index) => {
+                slot.addEventListener('click', () => {
+                    showToast(`正在读取存档位 ${index + 1}...`);
+                    setTimeout(() => {
+                        window.location.href = 'game.html';
+                    }, 1000);
+                });
+            });
+            
+            // 点击模态框外部关闭
+            loadGameModal.addEventListener('click', (e) => {
+                if (e.target === loadGameModal) {
+                    loadGameModal.classList.add('hidden');
+                }
+            });
+            
+            // 显示提示消息
+            function showToast(message) {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toast-message');
+                
+                toastMessage.textContent = message;
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            }
+            
+            // 模拟数据更新
+            function updateData() {
+                const userCount = document.getElementById('user-count');
+                const characterCount = document.getElementById('character-count');
+                const onlineCount = document.getElementById('online-count');
+                
+                // 随机增减一些数值
+                const userVal = parseInt(userCount.textContent.replace(',', ''));
+                const charVal = parseInt(characterCount.textContent.replace(',', ''));
+                const onlineVal = parseInt(onlineCount.textContent);
+                
+                userCount.textContent = (userVal + Math.floor(Math.random() * 10 - 5)).toLocaleString();
+                characterCount.textContent = (charVal + Math.floor(Math.random() * 20 - 10)).toLocaleString();
+                onlineCount.textContent = Math.max(0, onlineVal + Math.floor(Math.random() * 20 - 10)).toLocaleString();
+            }
+            
+            // 每30秒更新一次数据
+            setInterval(updateData, 30000);
+        });
+    </script>
+</body>
+</html>
