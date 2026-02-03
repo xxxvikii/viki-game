@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吾家有女初长成 - 古风高自由度随机文字人生模拟器</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4A574',
+                        secondary: '#E6B888',
+                        accent: '#C8553D',
+                        light: '#F9F3E9',
+                        dark: '#5D4037',
+                        muted: '#A1887F'
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif']
+                    },
+                    backgroundImage: {
+                        'scroll-pattern': "url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/360095ab1196484cb2b634e94bf4427b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702139&x-signature=QkSIRT%2F0Eado5JBWZt3d3G59XEQ%3D')"
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .scroll-container {
+                background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/360095ab1196484cb2b634e94bf4427b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702139&x-signature=QkSIRT%2F0Eado5JBWZt3d3G59XEQ%3D');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+            .nav-item {
+                @apply relative px-4 py-2 text-dark hover:text-accent transition-colors duration-300;
+            }
+            .nav-item::after {
+                content: '';
+                @apply absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300;
+            }
+            .nav-item:hover::after {
+                @apply w-full;
+            }
+            .btn-primary {
+                @apply bg-accent text-white px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;
+            }
+            .btn-secondary {
+                @apply bg-primary text-dark px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;
+            }
+            .carousel-item {
+                @apply opacity-0 transition-opacity duration-1000 absolute inset-0;
+            }
+            .carousel-item.active {
+                @apply opacity-100 z-10;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light font-serif text-dark min-h-screen">
+    <!-- 导航栏 -->
+    <header class="bg-light bg-opacity-90 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/83fdc46a4e064461ab31728abbf3934b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702130&x-signature=2CETffZhAKbw%2Fj%2FRbg6rBznQqws%3D" alt="吾家有女初长成" class="h-16">
+            </div>
+            
+            <!-- 导航菜单 -->
+            <nav class="hidden md:flex space-x-2">
+                <a href="#home" class="nav-item">首页</a>
+                <a href="#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="#author" class="nav-item">作者信息</a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="mobile-menu-button" class="md:hidden text-dark text-2xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-light shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-2">
+                <a href="#home" class="nav-item">首页</a>
+                <a href="#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="#author" class="nav-item">作者信息</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main>
+        <!-- 首页封面 -->
+        <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/26da44e1279c42a0b32da771d2dcbbb5~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702120&x-signature=T6oiYxrKBH5Njg%2BvtlkFbqBw9OM%3D'); filter: blur(3px); opacity: 0.7;"></div>
+            <div class="relative z-10 text-center px-4">
+                <h1 class="text-5xl md:text-7xl font-bold text-dark mb-6 text-shadow">吾家有女初长成</h1>
+                <p class="text-xl md:text-2xl text-dark mb-10 max-w-2xl mx-auto">古风高自由度随机文字人生模拟器</p>
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <button id="start-game" class="btn-primary">
+                        <i class="fa fa-play mr-2"></i>开始游戏
+                    </button>
+                    <button id="load-game" class="btn-secondary">
+                        <i class="fa fa-folder-open mr-2"></i>读取存档
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 游戏介绍 -->
+        <section id="about" class="py-20 px-4">
+            <div class="container mx-auto max-w-5xl">
+                <h2 class="text-4xl font-bold text-center mb-12 text-accent">游戏介绍</h2>
+                
+                <div class="bg-white bg-opacity-80 rounded-xl shadow-lg p-8 mb-12">
+                    <h3 class="text-2xl font-bold mb-4 text-dark">游戏背景</h3>
+                    <p class="mb-4 text-lg">《吾家有女初长成》是一款以古代/民国初期为背景的文字人生模拟游戏。玩家将以五位女儿中任意一位为第一视角，沉浸式体验从12岁到寿终正寝的完整人生。</p>
+                    <p class="text-lg">游戏主打温馨喜剧风格，围绕家庭日常、姐妹互动、技能养成、婚恋选择、社交圈层互动等核心玩法展开，让玩家体验古代女子的成长历程。</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white bg-opacity-80 rounded-xl shadow-lg p-8">
+                        <h3 class="text-2xl font-bold mb-4 text-dark">核心特色</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fa fa-star text-accent mt-1 mr-2"></i>
+                                <span>高自由度抉择，无强制剧情</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-random text-accent mt-1 mr-2"></i>
+                                <span>剧情随机性，每次游戏体验不同</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-users text-accent mt-1 mr-2"></i>
+                                <span>NPC"活人感"，具备独立人生轨迹</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-magic text-accent mt-1 mr-2"></i>
+                                <span>AI驱动剧情生成，内容丰富多样</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-book text-accent mt-1 mr-2"></i>
+                                <span>完整人生体验，从12岁到寿终正寝</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white bg-opacity-80 rounded-xl shadow-lg p-8">
+                        <h3 class="text-2xl font-bold mb-4 text-dark">游戏玩法</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fa fa-home text-primary mt-1 mr-2"></i>
+                                <span>家庭日常：体验古代家庭生活</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-heart text-primary mt-1 mr-2"></i>
+                                <span>姐妹互动：与四位姐妹相处，建立感情</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-graduation-cap text-primary mt-1 mr-2"></i>
+                                <span>技能养成：学习各种古代技能</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-heartbeat text-primary mt-1 mr-2"></i>
+                                <span>婚恋选择：经历古代婚恋过程</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-comments text-primary mt-1 mr-2"></i>
+                                <span>社交圈层：与各种NPC互动</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 游戏截图轮播 -->
+                <div class="relative h-96 mb-12 rounded-xl overflow-hidden shadow-xl">
+                    <div id="carousel" class="relative h-full">
+                        <div class="carousel-item active">
+                            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/26da44e1279c42a0b32da771d2dcbbb5~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702120&x-signature=T6oiYxrKBH5Njg%2BvtlkFbqBw9OM%3D" alt="游戏截图1" class="w-full h-full object-cover">
+                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
+                                <h4 class="text-xl font-bold">五姐妹形象</h4>
+                                <p>游戏中的五位姐妹，性格各异，形象可爱</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/1cf53248a2b140e99d5bb4f6a66c161d~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702150&x-signature=kbGzrUpHQ7IEklc6qaYC%2FCP6d08%3D" alt="游戏截图2" class="w-full h-full object-cover">
+                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
+                                <h4 class="text-xl font-bold">家宅地图</h4>
+                                <p>可点击的家宅地图，探索不同场景</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702164&x-signature=I7ihkLdA5cCdRuJwTvTMoroFWhk%3D" alt="游戏截图3" class="w-full h-full object-cover">
+                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
+                                <h4 class="text-xl font-bold">人物头像集</h4>
+                                <p>游戏中的主要角色头像</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 轮播控制按钮 -->
+                        <button id="prev-slide" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-full w-10 h-10 flex items-center justify-center text-dark">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button id="next-slide" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-full w-10 h-10 flex items-center justify-center text-dark">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                        
+                        <!-- 轮播指示器 -->
+                        <div class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+                            <button class="w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 carousel-indicator active" data-index="0"></button>
+                            <button class="w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 carousel-indicator" data-index="1"></button>
+                            <button class="w-3 h-3 rounded-full bg-white bg-opacity-50 hover:bg-opacity-100 carousel-indicator" data-index="2"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心数据面板 -->
+        <section class="py-12 px-4 bg-primary bg-opacity-20">
+            <div class="container mx-auto max-w-5xl">
+                <h2 class="text-4xl font-bold text-center mb-12 text-accent">核心数据</h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <h3 class="text-lg font-bold mb-2 text-dark">当前版本</h3>
+                        <p class="text-2xl font-bold text-accent">v1.0.0</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <h3 class="text-lg font-bold mb-2 text-dark">服务状态</h3>
+                        <p class="text-2xl font-bold text-green-600">正常</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <h3 class="text-lg font-bold mb-2 text-dark">注册用户</h3>
+                        <p class="text-2xl font-bold text-primary">1,234</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <h3 class="text-lg font-bold mb-2 text-dark">角色总数</h3>
+                        <p class="text-2xl font-bold text-primary">5,678</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                        <h3 class="text-lg font-bold mb-2 text-dark">在线人数</h3>
+                        <p class="text-2xl font-bold text-primary">123</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 作者信息 -->
+        <section id="author" class="py-20 px-4">
+            <div class="container mx-auto max-w-5xl text-center">
+                <h2 class="text-4xl font-bold mb-12 text-accent">作者信息</h2>
+                
+                <div class="bg-white bg-opacity-80 rounded-xl shadow-lg p-8 max-w-md mx-auto">
+                    <div class="w-32 h-32 rounded-full bg-primary mx-auto mb-6 flex items-center justify-center text-4xl font-bold text-white">
+                        西一
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2 text-dark">西一</h3>
+                    <p class="text-muted mb-6">游戏开发者</p>
+                    <p class="mb-6">热爱古风文化和文字游戏的开发者，致力于创造沉浸式的文字游戏体验。</p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="text-dark hover:text-accent text-2xl transition-colors">
+                            <i class="fa fa-weibo"></i>
+                        </a>
+                        <a href="#" class="text-dark hover:text-accent text-2xl transition-colors">
+                            <i class="fa fa-wechat"></i>
+                        </a>
+                        <a href="#" class="text-dark hover:text-accent text-2xl transition-colors">
+                            <i class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-8 px-4">
+        <div class="container mx-auto max-w-5xl">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">吾家有女初长成</h3>
+                    <p class="text-gray-400">古风高自由度随机文字人生模拟器</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#home" class="text-gray-400 hover:text-white transition-colors">首页</a>
+                    <a href="#about" class="text-gray-400 hover:text-white transition-colors">游戏介绍</a>
+                    <a href="api-config.html" class="text-gray-400 hover:text-white transition-colors">API接口配置</a>
+                    <a href="#author" class="text-gray-400 hover:text-white transition-colors">作者信息</a>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2025 西一 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 读取存档模态框 -->
+    <div id="load-game-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-light rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-dark">读取存档</h3>
+                <button id="close-load-modal" class="text-dark hover:text-accent text-2xl">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="save-slot bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-bold text-dark">存档位 1</h4>
+                        <span class="text-sm text-muted">2025-07-21 14:30</span>
+                    </div>
+                    <p class="text-sm">李氏家族，排行第三，16岁，待字闺中</p>
+                </div>
+                
+                <div class="save-slot bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-bold text-dark">存档位 2</h4>
+                        <span class="text-sm text-muted">2025-07-20 09:15</span>
+                    </div>
+                    <p class="text-sm">王氏家族，排行第五，14岁，才艺出众</p>
+                </div>
+                
+                <div class="save-slot bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-bold text-dark">存档位 3</h4>
+                        <span class="text-sm text-muted">2025-07-19 18:45</span>
+                    </div>
+                    <p class="text-sm">张氏家族，排行第一，18岁，已许配人家</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+                <button id="cancel-load" class="px-4 py-2 bg-gray-300 text-dark rounded-lg hover:bg-gray-400 transition-colors mr-2">
+                    取消
+                </button>
+                <button id="confirm-load" class="px-4 py-2 bg-accent text-white rounded-lg hover:bg-opacity-90 transition-colors">
+                    读取
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 如果是移动端，点击后关闭菜单
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // 轮播图功能
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-item');
+        const indicators = document.querySelectorAll('.carousel-indicator');
+        const totalSlides = slides.length;
+        
+        function showSlide(index) {
+            // 隐藏所有幻灯片
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // 移除所有指示器的活动状态
+            indicators.forEach(indicator => {
+                indicator.classList.remove('active');
+            });
+            
+            // 显示当前幻灯片和指示器
+            slides[index].classList.add('active');
+            indicators[index].classList.add('active');
+            
+            // 更新当前幻灯片索引
+            currentSlide = index;
+        }
+        
+        function nextSlide() {
+            let next = currentSlide + 1;
+            if (next >= totalSlides) {
+                next = 0;
+            }
+            showSlide(next);
+        }
+        
+        function prevSlide() {
+            let prev = currentSlide - 1;
+            if (prev < 0) {
+                prev = totalSlides - 1;
+            }
+            showSlide(prev);
+        }
+        
+        // 设置自动轮播
+        let slideInterval = setInterval(nextSlide, 5000);
+        
+        // 轮播控制按钮
+        document.getElementById('next-slide').addEventListener('click', function() {
+            clearInterval(slideInterval);
+            nextSlide();
+            slideInterval = setInterval(nextSlide, 5000);
+        });
+        
+        document.getElementById('prev-slide').addEventListener('click', function() {
+            clearInterval(slideInterval);
+            prevSlide();
+            slideInterval = setInterval(nextSlide, 5000);
+        });
+        
+        // 指示器点击事件
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', function() {
+                clearInterval(slideInterval);
+                showSlide(index);
+                slideInterval = setInterval(nextSlide, 5000);
+            });
+        });
+        
+        // 开始游戏按钮
+        document.getElementById('start-game').addEventListener('click', function() {
+            window.location.href = 'create-role.html';
+        });
+        
+        // 读取存档按钮
+        document.getElementById('load-game').addEventListener('click', function() {
+            document.getElementById('load-game-modal').classList.remove('hidden');
+        });
+        
+        // 关闭模态框
+        document.getElementById('close-load-modal').addEventListener('click', function() {
+            document.getElementById('load-game-modal').classList.add('hidden');
+        });
+        
+        document.getElementById('cancel-load').addEventListener('click', function() {
+            document.getElementById('load-game-modal').classList.add('hidden');
+        });
+        
+        // 点击存档槽
+        document.querySelectorAll('.save-slot').forEach((slot, index) => {
+            slot.addEventListener('click', function() {
+                document.querySelectorAll('.save-slot').forEach(s => {
+                    s.classList.remove('ring-2', 'ring-accent');
+                });
+                this.classList.add('ring-2', 'ring-accent');
+            });
+        });
+        
+        // 确认读取
+        document.getElementById('confirm-load').addEventListener('click', function() {
+            const selectedSlot = document.querySelector('.save-slot.ring-2');
+            if (selectedSlot) {
+                // 这里应该有读取存档的逻辑
+                alert('存档读取中...');
+                window.location.href = 'game.html';
+            } else {
+                alert('请选择一个存档');
+            }
+        });
+    </script>
+</body>
+</html>

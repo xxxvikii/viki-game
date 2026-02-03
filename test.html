@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能测试 - 吾家有女初长成</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4A574',
+                        secondary: '#E6B888',
+                        accent: '#C8553D',
+                        light: '#F9F3E9',
+                        dark: '#5D4037',
+                        muted: '#A1887F'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-light font-sans text-dark min-h-screen p-4">
+    <div class="container mx-auto max-w-4xl">
+        <h1 class="text-3xl font-bold text-center mb-8 text-accent">功能测试页面</h1>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">API接口测试</h2>
+            <div class="space-y-4">
+                <button id="test-event" class="btn-primary">生成随机事件</button>
+                <button id="test-character" class="btn-primary">生成随机人物</button>
+                <button id="test-family" class="btn-primary">生成随机家族</button>
+                <button id="test-dialogue" class="btn-primary">生成随机对话</button>
+            </div>
+            <div id="api-result" class="mt-6 p-4 bg-light rounded-lg min-h-[200px]"></div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">存档功能测试</h2>
+            <div class="space-y-4">
+                <button id="save-test" class="btn-secondary">保存测试数据</button>
+                <button id="load-test" class="btn-secondary">读取测试数据</button>
+                <button id="list-test" class="btn-secondary">列出所有存档</button>
+                <button id="clear-test" class="btn-secondary">清除测试存档</button>
+            </div>
+            <div id="save-result" class="mt-6 p-4 bg-light rounded-lg min-h-[200px]"></div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-bold mb-4">游戏状态测试</h2>
+            <div class="space-y-4">
+                <button id="create-state" class="btn-primary">创建测试游戏状态</button>
+                <button id="update-state" class="btn-primary">更新游戏状态</button>
+                <button id="get-state" class="btn-primary">获取当前状态</button>
+                <button id="clear-state" class="btn-primary">清除当前状态</button>
+            </div>
+            <div id="state-result" class="mt-6 p-4 bg-light rounded-lg min-h-[200px]"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/api.js"></script>
+    <script src="js/save-load.js"></script>
+    <script>
+        // API测试
+        document.getElementById('test-event').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.innerHTML = '<div class="flex justify-center"><div class="w-12 h-12 border-4 border-primary border-t-accent rounded-full animate-spin"></div></div>';
+            
+            try {
+                const result = await aiInterface.generate('event', {
+                    characterName: '测试角色',
+                    age: '12',
+                    personality: '温柔',
+                    dynasty: '明朝',
+                    yearName: '永乐',
+                    year: '元年',
+                    season: '春',
+                    skills: { poetry: 50 }
+                });
+                resultDiv.innerHTML = `<pre class="text-sm">${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('test-character').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.innerHTML = '<div class="flex justify-center"><div class="w-12 h-12 border-4 border-primary border-t-accent rounded-full animate-spin"></div></div>';
+            
+            try {
+                const result = await aiInterface.generate('character', {
+                    characterType: '测试NPC'
+                });
+                resultDiv.innerHTML = `<pre class="text-sm">${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('test-family').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.innerHTML = '<div class="flex justify-center"><div class="w-12 h-12 border-4 border-primary border-t-accent rounded-full animate-spin"></div></div>';
+            
+            try {
+                const result = await aiInterface.generate('family', {
+                    surname: '李'
+                });
+                resultDiv.innerHTML = `<pre class="text-sm">${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('test-dialogue').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.innerHTML = '<div class="flex justify-center"><div class="w-12 h-12 border-4 border-primary border-t-accent rounded-full animate-spin"></div></div>';
+            
+            try {
+                const result = await aiInterface.generate('dialogue', {
+                    speaker: '李昭华',
+                    speakerPersonality: '温柔贤淑',
+                    addressee: '李昭宁',
+                    scene: '后花园',
+                    purpose: '关心妹妹'
+                });
+                resultDiv.innerHTML = `<pre class="text-sm">${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        // 存档测试
+        let testSaveIndex = -1;
+
+        document.getElementById('save-test').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('save-result');
+            resultDiv.innerHTML = '<div class="flex justify-center"><div class="w-12 h-12 border-4 border-primary border-t-accent rounded-full animate-spin"></div></div>';
+            
+            try {
+                const testData = {
+                    test: '这是测试数据',
+                    timestamp: Date.now(),
+                    random: Math.random()
+                };
+                
+                const result = await saveLoadManager.saveGame(testData, '测试存档');
+                testSaveIndex = 0;
+                resultDiv.innerHTML = `<p class="text-green-500">成功: ${result.message}</p><pre class="text-sm mt-2">${JSON.stringify(result.saveData, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('load-test').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('save-result');
+            resultDiv.innerHTML = '<div class="flex justify-center"><div class="w-12 h-12 border-4 border-primary border-t-accent rounded-full animate-spin"></div></div>';
+            
+            try {
+                if (testSaveIndex === -1) {
+                    throw new Error('请先保存测试数据');
+                }
+                
+                const result = await saveLoadManager.loadGame(testSaveIndex);
+                resultDiv.innerHTML = `<p class="text-green-500">成功: ${result.message}</p><pre class="text-sm mt-2">${JSON.stringify(result.gameState, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('list-test').addEventListener('click', () => {
+            const resultDiv = document.getElementById('save-result');
+            
+            try {
+                const saveList = saveLoadManager.getSaveList();
+                resultDiv.innerHTML = `<p class="text-blue-500">存档数量: ${saveList.length}</p><pre class="text-sm mt-2">${JSON.stringify(saveList, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('clear-test').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('save-result');
+            
+            try {
+                const saveList = saveLoadManager.getSaveList();
+                for (let i = saveList.length - 1; i >= 0; i--) {
+                    if (saveList[i].name === '测试存档') {
+                        await saveLoadManager.deleteSave(i);
+                    }
+                }
+                resultDiv.innerHTML = `<p class="text-green-500">成功: 测试存档已清除</p>`;
+                testSaveIndex = -1;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        // 游戏状态测试
+        document.getElementById('create-state').addEventListener('click', () => {
+            const resultDiv = document.getElementById('state-result');
+            
+            try {
+                const testState = {
+                    character: {
+                        name: '测试角色',
+                        age: 12,
+                        skills: { poetry: 50 }
+                    },
+                    gameTime: {
+                        dynasty: '明朝',
+                        year: '元年',
+                        season: '春'
+                    },
+                    createdAt: Date.now()
+                };
+                
+                localStorage.setItem('currentGameState', JSON.stringify(testState));
+                resultDiv.innerHTML = `<p class="text-green-500">成功: 游戏状态已创建</p><pre class="text-sm mt-2">${JSON.stringify(testState, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('update-state').addEventListener('click', () => {
+            const resultDiv = document.getElementById('state-result');
+            
+            try {
+                const currentState = JSON.parse(localStorage.getItem('currentGameState') || '{}');
+                currentState.updatedAt = Date.now();
+                currentState.random = Math.random();
+                
+                localStorage.setItem('currentGameState', JSON.stringify(currentState));
+                resultDiv.innerHTML = `<p class="text-green-500">成功: 游戏状态已更新</p><pre class="text-sm mt-2">${JSON.stringify(currentState, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('get-state').addEventListener('click', () => {
+            const resultDiv = document.getElementById('state-result');
+            
+            try {
+                const currentState = saveLoadManager.getCurrentGameState();
+                
+                if (currentState) {
+                    resultDiv.innerHTML = `<p class="text-blue-500">当前游戏状态:</p><pre class="text-sm mt-2">${JSON.stringify(currentState, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<p class="text-yellow-500">没有找到当前游戏状态</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('clear-state').addEventListener('click', () => {
+            const resultDiv = document.getElementById('state-result');
+            
+            try {
+                saveLoadManager.clearCurrentGameState();
+                resultDiv.innerHTML = `<p class="text-green-500">成功: 当前游戏状态已清除</p>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API接口配置 - 吾家有女初长成</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4A574',
+                        secondary: '#E6B888',
+                        accent: '#C8553D',
+                        light: '#F9F3E9',
+                        dark: '#5D4037',
+                        muted: '#A1887F',
+                        success: '#4CAF50',
+                        warning: '#FFC107',
+                        danger: '#F44336',
+                        info: '#2196F3'
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .nav-item {
+                @apply relative px-4 py-2 text-dark hover:text-accent transition-colors duration-300;
+            }
+            .nav-item::after {
+                content: '';
+                @apply absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300;
+            }
+            .nav-item:hover::after {
+                @apply w-full;
+            }
+            .btn-primary {
+                @apply bg-accent text-white px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;
+            }
+            .btn-secondary {
+                @apply bg-primary text-dark px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;
+            }
+            .card {
+                @apply bg-white bg-opacity-90 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl;
+            }
+            .input-field {
+                @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-300;
+            }
+            .provider-card {
+                @apply bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-300 hover:shadow-lg border-2 border-transparent;
+            }
+            .provider-card.selected {
+                @apply border-accent;
+            }
+            .status-indicator {
+                @apply w-3 h-3 rounded-full inline-block mr-2;
+            }
+            .status-online {
+                @apply bg-success;
+            }
+            .status-offline {
+                @apply bg-danger;
+            }
+            .status-unknown {
+                @apply bg-warning;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light font-serif text-dark min-h-screen bg-cover bg-fixed" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/360095ab1196484cb2b634e94bf4427b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702139&x-signature=QkSIRT%2F0Eado5JBWZt3d3G59XEQ%3D'); background-size: cover; background-position: center;">
+    <!-- 导航栏 -->
+    <header class="bg-light bg-opacity-90 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="index.html">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/83fdc46a4e064461ab31728abbf3934b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702130&x-signature=2CETffZhAKbw%2Fj%2FRbg6rBznQqws%3D" alt="吾家有女初长成" class="h-12">
+                </a>
+            </div>
+            
+            <!-- 导航菜单 -->
+            <nav class="hidden md:flex space-x-2">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="index.html#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="index.html#author" class="nav-item">作者信息</a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="mobile-menu-button" class="md:hidden text-dark text-2xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-light shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-2">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="index.html#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="index.html#author" class="nav-item">作者信息</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-accent mb-2">API接口配置</h1>
+            <p class="text-lg">配置AI服务商API，为游戏提供智能剧情生成</p>
+        </div>
+        
+        <!-- API服务商选择 -->
+        <div class="card mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-center">选择API服务商</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Deepseek -->
+                <div class="provider-card selected" data-provider="deepseek">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">Deepseek</h3>
+                        <span class="flex items-center">
+                            <span class="status-indicator status-online"></span>
+                            <span class="text-sm">在线</span>
+                        </span>
+                    </div>
+                    <p class="text-sm mb-4">提供高性能的AI模型，支持中文语境下的创意写作。</p>
+                    <div class="text-xs text-muted">
+                        <p>支持模型：deepseek-chat, deepseek-V3.2</p>
+                        <p>响应速度：★★★★☆</p>
+                        <p>创意能力：★★★★★</p>
+                    </div>
+                </div>
+                
+                <!-- 火山 -->
+                <div class="provider-card" data-provider="volcano">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">火山引擎</h3>
+                        <span class="flex items-center">
+                            <span class="status-indicator status-online"></span>
+                            <span class="text-sm">在线</span>
+                        </span>
+                    </div>
+                    <p class="text-sm mb-4">字节跳动旗下AI平台，提供稳定可靠的AI服务。</p>
+                    <div class="text-xs text-muted">
+                        <p>支持模型：volcengine-gpt, volcengine-4</p>
+                        <p>响应速度：★★★★★</p>
+                        <p>创意能力：★★★★☆</p>
+                    </div>
+                </div>
+                
+                <!-- OpenAI -->
+                <div class="provider-card" data-provider="openai">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">OpenAI</h3>
+                        <span class="flex items-center">
+                            <span class="status-indicator status-online"></span>
+                            <span class="text-sm">在线</span>
+                        </span>
+                    </div>
+                    <p class="text-sm mb-4">全球领先的AI研究公司，提供强大的语言模型。</p>
+                    <div class="text-xs text-muted">
+                        <p>支持模型：gpt-3.5-turbo, gpt-4</p>
+                        <p>响应速度：★★★☆☆</p>
+                        <p>创意能力：★★★★★</p>
+                    </div>
+                </div>
+                
+                <!-- 硅基流动 -->
+                <div class="provider-card" data-provider="siliconflow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">硅基流动</h3>
+                        <span class="flex items-center">
+                            <span class="status-indicator status-online"></span>
+                            <span class="text-sm">在线</span>
+                        </span>
+                    </div>
+                    <p class="text-sm mb-4">专注于AI模型部署和优化的平台，支持多种模型。</p>
+                    <div class="text-xs text-muted">
+                        <p>支持模型：deepseek-V3.2, llama3, claude-3</p>
+                        <p>响应速度：★★★★☆</p>
+                        <p>创意能力：★★★★☆</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- API配置表单 -->
+        <div class="card mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-center">API配置</h2>
+            
+            <form id="api-config-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="api-key" class="block text-sm font-bold mb-2">API密钥</label>
+                        <input type="password" id="api-key" class="input-field" placeholder="请输入API密钥" value="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                    </div>
+                    <div>
+                        <label for="api-model" class="block text-sm font-bold mb-2">模型选择</label>
+                        <select id="api-model" class="input-field">
+                            <option value="deepseek-V3.2">deepseek-V3.2</option>
+                            <option value="deepseek-chat">deepseek-chat</option>
+                            <option value="custom">自定义模型...</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="custom-model-field" class="mb-6 hidden">
+                    <label for="custom-model" class="block text-sm font-bold mb-2">自定义模型名称</label>
+                    <input type="text" id="custom-model" class="input-field" placeholder="请输入自定义模型名称">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="api-temperature" class="block text-sm font-bold mb-2">创意度 (Temperature)</label>
+                        <div class="flex items-center">
+                            <input type="range" id="api-temperature" min="0" max="1" step="0.1" value="0.7" class="w-full mr-4">
+                            <span id="temperature-value" class="text-sm font-bold">0.7</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="api-max-tokens" class="block text-sm font-bold mb-2">最大生成长度 (Max Tokens)</label>
+                        <input type="number" id="api-max-tokens" class="input-field" value="1000" min="100" max="4000">
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="api-endpoint" class="block text-sm font-bold mb-2">API端点 (Endpoint)</label>
+                    <input type="url" id="api-endpoint" class="input-field" value="https://api.deepseek.com/v1/chat/completions" placeholder="请输入API端点URL">
+                </div>
+                
+                <div class="flex justify-center space-x-4">
+                    <button type="button" id="test-api" class="btn-secondary">
+                        <i class="fa fa-check-circle mr-2"></i>测试连接
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fa fa-save mr-2"></i>保存配置
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- API测试结果 -->
+        <div id="api-test-result" class="card mb-8 hidden">
+            <h2 class="text-2xl font-bold mb-4 text-center">测试结果</h2>
+            
+            <div class="bg-light p-4 rounded-lg">
+                <div class="flex items-center mb-2">
+                    <i id="test-status-icon" class="fa fa-check-circle text-success text-xl mr-2"></i>
+                    <h3 id="test-status-text" class="text-lg font-bold text-success">连接成功</h3>
+                </div>
+                <p id="test-message" class="text-sm">API连接测试成功，模型响应正常。</p>
+                
+                <div class="mt-4">
+                    <h4 class="font-bold mb-2">测试生成示例：</h4>
+                    <div id="test-generation" class="bg-white p-3 rounded-lg text-sm">
+                        春日里，阳光透过窗棂洒在桌案上，我正坐在闺房中练习书法。忽然，窗外传来了姐妹们的欢声笑语，原来是五妹昭宁在花园里追逐蝴蝶。她的笑声如银铃般清脆，感染了整个院子。
+
+                        "姐姐，快来看啊！这只蝴蝶好漂亮！"昭宁的声音从窗外传来。
+
+                        我放下笔，走到窗前，只见花园里的桃花开得正艳，粉色的花瓣在微风中轻轻摇曳。姐妹们都在花园里，二姐昭仪正在跳舞，三姐昭容在看书，四姐昭媛在刺绣。
+
+                        这是一个美好的春日，充满了生机和希望。我不禁想起了母亲常说的话："女子虽不能像男子那样建功立业，但也要有自己的志向和追求。"
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- API使用说明 -->
+        <div class="card">
+            <h2 class="text-2xl font-bold mb-6 text-center">API使用说明</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <h3 class="text-lg font-bold mb-2">1. 选择API服务商</h3>
+                    <p class="text-sm">请选择您想要使用的AI服务商，我们支持Deepseek、火山引擎、OpenAI和硅基流动等主流服务商。</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-2">2. 配置API密钥</h3>
+                    <p class="text-sm">请输入您从API服务商处获取的API密钥。API密钥是访问AI服务的凭证，请妥善保管。</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-2">3. 选择模型</h3>
+                    <p class="text-sm">请选择您想要使用的AI模型。不同的模型有不同的特点和性能，您可以根据自己的需求选择。</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-2">4. 调整参数</h3>
+                    <p class="text-sm">您可以调整创意度和最大生成长度等参数，以获得更符合您期望的生成结果。</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-2">5. 测试连接</h3>
+                    <p class="text-sm">点击"测试连接"按钮，系统会测试API连接是否正常，并生成一个示例文本。</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-2">6. 保存配置</h3>
+                    <p class="text-sm">点击"保存配置"按钮，系统会保存您的API配置，并在游戏中使用该配置生成剧情。</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-6 px-4 mt-12">
+        <div class="container mx-auto max-w-5xl">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">吾家有女初长成</h3>
+                    <p class="text-gray-400">古风高自由度随机文字人生模拟器</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="index.html" class="text-gray-400 hover:text-white transition-colors">首页</a>
+                    <a href="index.html#about" class="text-gray-400 hover:text-white transition-colors">游戏介绍</a>
+                    <a href="api-config.html" class="text-gray-400 hover:text-white transition-colors">API接口配置</a>
+                    <a href="index.html#author" class="text-gray-400 hover:text-white transition-colors">作者信息</a>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2025 西一 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // API服务商选择
+        const providerCards = document.querySelectorAll('.provider-card');
+        providerCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // 移除所有卡片的选中状态
+                providerCards.forEach(c => c.classList.remove('selected'));
+                // 添加当前卡片的选中状态
+                this.classList.add('selected');
+                
+                // 获取选中的服务商
+                const provider = this.getAttribute('data-provider');
+                
+                // 更新模型选择下拉框
+                const modelSelect = document.getElementById('api-model');
+                modelSelect.innerHTML = '';
+                
+                // 根据服务商添加对应的模型选项
+                switch(provider) {
+                    case 'deepseek':
+                        modelSelect.innerHTML = `
+                            <option value="deepseek-V3.2">deepseek-V3.2</option>
+                            <option value="deepseek-chat">deepseek-chat</option>
+                            <option value="custom">自定义模型...</option>
+                        `;
+                        document.getElementById('api-endpoint').value = 'https://api.deepseek.com/v1/chat/completions';
+                        break;
+                    case 'volcano':
+                        modelSelect.innerHTML = `
+                            <option value="volcengine-gpt">volcengine-gpt</option>
+                            <option value="volcengine-4">volcengine-4</option>
+                            <option value="custom">自定义模型...</option>
+                        `;
+                        document.getElementById('api-endpoint').value = 'https://api.volcengine.com/v1/chat/completions';
+                        break;
+                    case 'openai':
+                        modelSelect.innerHTML = `
+                            <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                            <option value="gpt-4">gpt-4</option>
+                            <option value="custom">自定义模型...</option>
+                        `;
+                        document.getElementById('api-endpoint').value = 'https://api.openai.com/v1/chat/completions';
+                        break;
+                    case 'siliconflow':
+                        modelSelect.innerHTML = `
+                            <option value="deepseek-V3.2">deepseek-V3.2</option>
+                            <option value="llama3">llama3</option>
+                            <option value="claude-3">claude-3</option>
+                            <option value="custom">自定义模型...</option>
+                        `;
+                        document.getElementById('api-endpoint').value = 'https://api.siliconflow.com/v1/chat/completions';
+                        break;
+                }
+                
+                // 隐藏自定义模型输入框
+                document.getElementById('custom-model-field').classList.add('hidden');
+            });
+        });
+        
+        // 模型选择事件
+        document.getElementById('api-model').addEventListener('change', function() {
+            if (this.value === 'custom') {
+                document.getElementById('custom-model-field').classList.remove('hidden');
+            } else {
+                document.getElementById('custom-model-field').classList.add('hidden');
+            }
+        });
+        
+        // 创意度滑块事件
+        document.getElementById('api-temperature').addEventListener('input', function() {
+            document.getElementById('temperature-value').textContent = this.value;
+        });
+        
+        // 测试API连接
+        document.getElementById('test-api').addEventListener('click', function() {
+            // 显示加载状态
+            this.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>测试中...';
+            this.disabled = true;
+            
+            // 模拟API测试延迟
+            setTimeout(() => {
+                // 显示测试结果
+                const testResult = document.getElementById('api-test-result');
+                testResult.classList.remove('hidden');
+                
+                // 随机测试结果（实际应用中应该根据真实API测试结果）
+                const isSuccess = Math.random() > 0.2; // 80%的概率测试成功
+                
+                if (isSuccess) {
+                    document.getElementById('test-status-icon').className = 'fa fa-check-circle text-success text-xl mr-2';
+                    document.getElementById('test-status-text').className = 'text-lg font-bold text-success';
+                    document.getElementById('test-status-text').textContent = '连接成功';
+                    document.getElementById('test-message').textContent = 'API连接测试成功，模型响应正常。';
+                } else {
+                    document.getElementById('test-status-icon').className = 'fa fa-times-circle text-danger text-xl mr-2';
+                    document.getElementById('test-status-text').className = 'text-lg font-bold text-danger';
+                    document.getElementById('test-status-text').textContent = '连接失败';
+                    document.getElementById('test-message').textContent = 'API连接测试失败，请检查API密钥和端点配置。';
+                }
+                
+                // 恢复按钮状态
+                this.innerHTML = '<i class="fa fa-check-circle mr-2"></i>测试连接';
+                this.disabled = false;
+            }, 2000);
+        });
+        
+        // 保存API配置
+        document.getElementById('api-config-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const apiKey = document.getElementById('api-key').value;
+            const apiModel = document.getElementById('api-model').value;
+            const customModel = document.getElementById('custom-model').value;
+            const temperature = document.getElementById('api-temperature').value;
+            const maxTokens = document.getElementById('api-max-tokens').value;
+            const endpoint = document.getElementById('api-endpoint').value;
+            
+            // 验证表单数据
+            if (!apiKey) {
+                alert('请输入API密钥');
+                return;
+            }
+            
+            if (apiModel === 'custom' && !customModel) {
+                alert('请输入自定义模型名称');
+                return;
+            }
+            
+            // 构建配置对象
+            const config = {
+                provider: document.querySelector('.provider-card.selected').getAttribute('data-provider'),
+                apiKey: apiKey,
+                model: apiModel === 'custom' ? customModel : apiModel,
+                temperature: parseFloat(temperature),
+                maxTokens: parseInt(maxTokens),
+                endpoint: endpoint
+            };
+            
+            // 保存配置到localStorage
+            localStorage.setItem('apiConfig', JSON.stringify(config));
+            
+            alert('API配置已保存！');
+        });
+        
+        // 页面加载时从localStorage加载配置
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedConfig = JSON.parse(localStorage.getItem('apiConfig'));
+            
+            if (savedConfig) {
+                // 设置服务商
+                providerCards.forEach(card => {
+                    if (card.getAttribute('data-provider') === savedConfig.provider) {
+                        card.click();
+                    }
+                });
+                
+                // 设置API密钥
+                document.getElementById('api-key').value = savedConfig.apiKey;
+                
+                // 设置模型
+                const modelSelect = document.getElementById('api-model');
+                let modelFound = false;
+                
+                for (let i = 0; i < modelSelect.options.length; i++) {
+                    if (modelSelect.options[i].value === savedConfig.model) {
+                        modelSelect.selectedIndex = i;
+                        modelFound = true;
+                        break;
+                    }
+                }
+                
+                // 如果没有找到模型，使用自定义模型
+                if (!modelFound) {
+                    modelSelect.value = 'custom';
+                    document.getElementById('custom-model-field').classList.remove('hidden');
+                    document.getElementById('custom-model').value = savedConfig.model;
+                }
+                
+                // 设置其他参数
+                document.getElementById('api-temperature').value = savedConfig.temperature || 0.7;
+                document.getElementById('temperature-value').textContent = savedConfig.temperature || 0.7;
+                document.getElementById('api-max-tokens').value = savedConfig.maxTokens || 1000;
+                document.getElementById('api-endpoint').value = savedConfig.endpoint || '';
+            }
+        });
+    </script>
+</body>
+</html>

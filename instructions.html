@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏说明 - 吾家有女初长成</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D4A574',
+                        secondary: '#E6B888',
+                        accent: '#C8553D',
+                        light: '#F9F3E9',
+                        dark: '#5D4037',
+                        muted: '#A1887F'
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .nav-item {
+                @apply relative px-4 py-2 text-dark hover:text-accent transition-colors duration-300;
+            }
+            .nav-item::after {
+                content: '';
+                @apply absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300;
+            }
+            .nav-item:hover::after {
+                @apply w-full;
+            }
+            .btn-primary {
+                @apply bg-accent text-white px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;
+            }
+            .btn-secondary {
+                @apply bg-primary text-dark px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;
+            }
+            .card {
+                @apply bg-white bg-opacity-90 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl;
+            }
+            .section-title {
+                @apply text-2xl font-bold mb-4 text-accent border-b-2 border-accent pb-2 inline-block;
+            }
+            .subsection-title {
+                @apply text-xl font-bold mb-3 text-dark;
+            }
+            .toc-item {
+                @apply py-2 px-4 hover:bg-light rounded-lg transition-colors duration-300 cursor-pointer;
+            }
+            .toc-item.active {
+                @apply bg-light font-bold text-accent;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light font-serif text-dark min-h-screen bg-cover bg-fixed" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/360095ab1196484cb2b634e94bf4427b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702139&x-signature=QkSIRT%2F0Eado5JBWZt3d3G59XEQ%3D'); background-size: cover; background-position: center;">
+    <!-- 导航栏 -->
+    <header class="bg-light bg-opacity-90 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="index.html">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/83fdc46a4e064461ab31728abbf3934b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707EE8A458D6B00288E&rrcfp=f06b921b&x-expires=1772702130&x-signature=2CETffZhAKbw%2Fj%2FRbg6rBznQqws%3D" alt="吾家有女初长成" class="h-12">
+                </a>
+            </div>
+            
+            <!-- 导航菜单 -->
+            <nav class="hidden md:flex space-x-2">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="index.html#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="index.html#author" class="nav-item">作者信息</a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="mobile-menu-button" class="md:hidden text-dark text-2xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-light shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-2">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="index.html#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="index.html#author" class="nav-item">作者信息</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-accent mb-2">游戏说明</h1>
+            <p class="text-lg">了解游戏的核心设定、玩法规则和操作指南</p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- 左侧目录 -->
+            <div class="lg:col-span-1">
+                <div class="card sticky top-24">
+                    <h2 class="text-xl font-bold mb-4 text-center">目录</h2>
+                    <div class="space-y-1">
+                        <div class="toc-item active" data-section="core-setting">
+                            <i class="fa fa-book mr-2"></i>核心设定
+                        </div>
+                        <div class="toc-item" data-section="game-rules">
+                            <i class="fa fa-gavel mr-2"></i>玩法规则
+                        </div>
+                        <div class="toc-item" data-section="interface-guide">
+                            <i class="fa fa-desktop mr-2"></i>界面操作指南
+                        </div>
+                        <div class="toc-item" data-section="npc-interaction">
+                            <i class="fa fa-users mr-2"></i>NPC互动逻辑
+                        </div>
+                        <div class="toc-item" data-section="skill-system">
+                            <i class="fa fa-graduation-cap mr-2"></i>技能系统
+                        </div>
+                        <div class="toc-item" data-section="event-system">
+                            <i class="fa fa-calendar mr-2"></i>事件系统
+                        </div>
+                        <div class="toc-item" data-section="save-load">
+                            <i class="fa fa-folder mr-2"></i>存档读档
+                        </div>
+                        <div class="toc-item" data-section="api-usage">
+                            <i class="fa fa-cogs mr-2"></i>API使用指南
+                        </div>
+                        <div class="toc-item" data-section="faq">
+                            <i class="fa fa-question-circle mr-2"></i>常见问题
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧内容 -->
+            <div class="lg:col-span-3 space-y-8">
+                <!-- 核心设定 -->
+                <section id="core-setting" class="card">
+                    <h2 class="section-title">核心设定</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="subsection-title">游戏背景</h3>
+                            <p class="mb-3">《吾家有女初长成》是一款以古代/民国初期为背景的文字人生模拟游戏。玩家将以五位女儿中任意一位为第一视角，沉浸式体验从12岁到寿终正寝的完整人生。</p>
+                            <p>游戏世界中，朝代、年号、家族背景等都是随机生成的，每次游戏都会有不同的体验。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">家族设定</h3>
+                            <p class="mb-3">游戏开始时，系统会随机生成家族的基本信息，包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>朝代：游戏背景所处的朝代，如汉朝、唐朝、宋朝、明朝、清朝或民国初期</li>
+                                <li>年号：当前皇帝的年号，如洪武、永乐、康熙、乾隆等</li>
+                                <li>姓氏：家族的姓氏，如李、王、张、刘等</li>
+                                <li>身份：家族的社会地位，如书香门第、官宦之家、商贾巨富、武林世家等</li>
+                                <li>资产：家族的财富状况，如富裕、中等、小康、清贫</li>
+                                <li>家风：家族的传统和价值观，如诗书传家、清正廉洁、乐善好施等</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">角色设定</h3>
+                            <p class="mb-3">玩家可以选择五位姐妹中的任意一位作为主角，每位角色都有自己独特的属性：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>排行：在姐妹中的排行，从大姐到五妹</li>
+                                <li>姓名/闺名：角色的正式姓名和闺名</li>
+                                <li>容貌：角色的外貌评分，从普通到国色天香</li>
+                                <li>性格：角色的性格特质，如温柔贤淑、活泼开朗、安静内向等</li>
+                                <li>初始技能：角色擅长的技能，如诗词、刺绣、管家等</li>
+                                <li>隐性属性：包括体质、福运、智计、魅力等影响游戏进程的隐藏属性</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">NPC设定</h3>
+                            <p class="mb-3">游戏中会出现各种NPC角色，包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>父母：主角的父母，对主角的成长有重要影响</li>
+                                <li>姐妹：其他四位姐妹，与主角有密切的互动</li>
+                                <li>婚恋对象：可能成为主角配偶的NPC</li>
+                                <li>其他NPC：包括亲戚、朋友、仆人、社会名流等</li>
+                            </ul>
+                            <p class="mt-3">每个NPC都有自己的性格、背景和人生轨迹，会根据游戏进程和玩家的选择而变化。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 玩法规则 -->
+                <section id="game-rules" class="card">
+                    <h2 class="section-title">玩法规则</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="subsection-title">游戏流程</h3>
+                            <p class="mb-3">游戏的基本流程如下：</p>
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li>创建角色：选择或随机生成家族和角色信息</li>
+                                <li>开始游戏：以12岁的年龄开始游戏</li>
+                                <li>年度事件：每回合（年）会触发3-5个核心事件</li>
+                                <li>做出选择：对每个事件做出选择，影响角色发展</li>
+                                <li>推进时间：点击"推进下一年"按钮，进入下一个季节</li>
+                                <li>角色成长：角色会随着时间推移而成长，技能和属性会发生变化</li>
+                                <li>寿终正寝：角色在50-90岁之间随机寿终正寝，游戏结束</li>
+                                <li>生成传记：游戏结束后生成角色的人生自传</li>
+                            </ol>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">时间系统</h3>
+                            <p class="mb-3">游戏中的时间流逝方式：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>每回合对应一个季节（春、夏、秋、冬）</li>
+                                <li>四个回合组成一年</li>
+                                <li>角色每年增长一岁</li>
+                                <li>游戏从角色12岁开始，直到寿终正寝</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">属性系统</h3>
+                            <p class="mb-3">角色的主要属性包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>容貌：影响角色的魅力和婚恋选择</li>
+                                <li>健康：影响角色的寿命和疾病几率</li>
+                                <li>情感：反映角色的情感状态和婚恋进度</li>
+                                <li>资产：反映角色的财富状况</li>
+                            </ul>
+                            <p class="mt-3">这些属性会随着游戏进程和玩家选择而变化。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">技能系统</h3>
+                            <p class="mb-3">游戏中的技能包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>诗词：文学才华，影响社交和婚恋</li>
+                                <li>刺绣：女红技艺，影响家庭地位和收入</li>
+                                <li>管家：持家能力，影响家庭和谐和资产</li>
+                                <li>音律：音乐才能，影响社交和娱乐</li>
+                                <li>烹饪：厨艺，影响家庭关系和健康</li>
+                                <li>绘画：绘画技艺，影响社交和收入</li>
+                                <li>舞蹈：舞蹈才能，影响社交和婚恋</li>
+                            </ul>
+                            <p class="mt-3">技能等级从初学、入门、熟练到精通，通过相关事件和选择可以提升技能等级。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">婚恋系统</h3>
+                            <p class="mb-3">角色到了适婚年龄（通常是16岁以后）会触发婚恋相关事件：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>媒人说亲：媒人会介绍潜在的婚配对象</li>
+                                <li>偶遇邂逅：在各种场合遇到潜在的婚恋对象</li>
+                                <li>父母安排：父母可能会为角色安排婚事</li>
+                                <li>自由恋爱：通过互动提升好感度，发展恋情</li>
+                            </ul>
+                            <p class="mt-3">角色的容貌、性格、技能和家族背景都会影响婚恋选择和结果。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 界面操作指南 -->
+                <section id="interface-guide" class="card">
+                    <h2 class="section-title">界面操作指南</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="subsection-title">顶部时间面板</h3>
+                            <p class="mb-3">顶部时间面板显示当前的游戏时间信息：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>朝代：当前游戏背景的朝代</li>
+                                <li>年号：当前皇帝的年号</li>
+                                <li>年份：当前的年份</li>
+                                <li>季节：当前的季节（春、夏、秋、冬），通过图标显示</li>
+                                <li>年龄：主角当前的年龄</li>
+                            </ul>
+                            <p class="mt-3">点击右上角的菜单按钮可以打开游戏菜单，进行存档、读档、设置等操作。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">左侧信息栏</h3>
+                            <p class="mb-3">左侧信息栏显示主角的个人信息和技能：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>个人信息：包括姓名、容貌、性格、健康、情感状态和资产</li>
+                                <li>技能面板：显示各种技能的等级和熟练度</li>
+                            </ul>
+                            <p class="mt-3">鼠标悬停在技能条上可以查看详细信息。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">中间核心内容区</h3>
+                            <p class="mb-3">中间核心内容区是游戏的主要交互区域，包含四个选项卡：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>年度事件：显示当前年度的核心事件，玩家需要做出选择</li>
+                                <li>人物互动：显示与NPC的互动事件，可以选择不同的互动方式</li>
+                                <li>家庭动态：显示家庭内部的动态和变化，如"李家小报"</li>
+                                <li>我的手记：记录角色的心情和感悟，可以添加新的手记</li>
+                            </ul>
+                            <p class="mt-3">点击事件卡片可以查看详情，点击按钮可以做出选择。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">右侧功能区</h3>
+                            <p class="mb-3">右侧功能区包含多个辅助功能模块：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>新人物登场：显示新出现的NPC角色，点击可以查看详情</li>
+                                <li>事件记录回顾：记录历史事件，方便回顾</li>
+                                <li>书信箱：接收和查看游戏中的书信</li>
+                                <li>家宅地图：点击不同区域可以触发场景事件</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">底部操作栏</h3>
+                            <p class="mb-3">底部操作栏包含游戏的主要操作按钮：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>推进下一年：推进游戏时间，进入下一个季节</li>
+                                <li>人物关系：查看与NPC的关系网</li>
+                                <li>资产技能：查看详细的资产和技能信息</li>
+                                <li>回顾事件：回顾历史事件</li>
+                                <li>重开新人生：重新开始游戏，创建新角色</li>
+                                <li>存档/读档：保存和读取游戏进度</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- NPC互动逻辑 -->
+                <section id="npc-interaction" class="card">
+                    <h2 class="section-title">NPC互动逻辑</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="subsection-title">NPC"活人感"系统</h3>
+                            <p class="mb-3">游戏中的NPC具有高度的自主性和"活人感"：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>自主行为：NPC会根据自己的性格和背景做出合理的行为</li>
+                                <li>独立人生：每个NPC都有自己的人生轨迹，包括成长、婚恋、事业等</li>
+                                <li>情感变化：NPC对主角的好感度会随着互动而变化</li>
+                                <li>记忆系统：NPC会记住与主角的重要互动和事件</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">互动方式</h3>
+                            <p class="mb-3">与NPC的互动方式包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>对话选择：在对话中选择不同的回应</li>
+                                <li>礼物赠送：赠送礼物提升好感度</li>
+                                <li>共同活动：一起参加各种活动，如赏花、读书、游玩等</li>
+                                <li>帮助支持：在NPC需要帮助时提供支持</li>
+                            </ul>
+                            <p class="mt-3">不同的互动方式会产生不同的效果，影响NPC的好感度和后续剧情。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">好感度系统</h3>
+                            <p class="mb-3">NPC对主角的好感度是重要的游戏机制：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>好感度范围：从-100（憎恨）到100（爱慕）</li>
+                                <li>影响因素：互动方式、角色性格、技能水平、家族背景等</li>
+                                <li>好感度效果：影响对话选项、剧情触发、婚恋可能性等</li>
+                                <li>特殊事件：高好感度可能触发特殊事件和剧情</li>
+                            </ul>
+                            <p class="mt-3">好感度变化会通过弹窗提醒，重要NPC的好感度变化会在界面上显示。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">NPC人生轨迹</h3>
+                            <p class="mb-3">NPC会经历完整的人生过程：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>成长：年龄增长，属性和技能变化</li>
+                                <li>婚恋：结婚生子，组建自己的家庭</li>
+                                <li>事业：发展自己的事业，获得成就</li>
+                                <li>健康：可能生病、受伤，甚至死亡</li>
+                                <li>意外：可能遇到各种意外事件，改变人生轨迹</li>
+                            </ul>
+                            <p class="mt-3">NPC的人生轨迹会受到主角的影响，同时也会反过来影响主角的人生。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 技能系统 -->
+                <section id="skill-system" class="card">
+                    <h2 class="section-title">技能系统</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="subsection-title">技能等级</h3>
+                            <p class="mb-3">游戏中的技能分为五个等级：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>初学（0-20）：刚刚接触，了解基本概念</li>
+                                <li>入门（21-40）：掌握基础技能，可以简单应用</li>
+                                <li>熟练（41-60）：技能运用自如，有一定经验</li>
+                                <li>精通（61-80）：在该领域有较深的造诣</li>
+                                <li>大师（81-100）：技艺超群，闻名一方</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">技能类型</h3>
+                            <p class="mb-3">游戏中的技能类型包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>文学类：诗词、书法、绘画、读书</li>
+                                <li>技艺类：刺绣、烹饪、音律、舞蹈</li>
+                                <li>生活类：管家、理财、园艺、女红</li>
+                                <li>社交类：礼仪、口才、茶道、香道</li>
+                                <li>特殊类：医术、武术、相术、占卜</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">技能提升</h3>
+                            <p class="mb-3">技能提升的方式包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>事件选择：在事件中选择学习或练习相关技能</li>
+                                <li>专门学习：花费时间和资源专门学习某项技能</li>
+                                <li>实践应用：在日常生活中应用技能，积累经验</li>
+                                <li>拜师学艺：向专业人士学习，快速提升技能</li>
+                                <li>天赋加成：某些性格特质会对特定技能有加成</li>
+                            </ul>
+                            <p class="mt-3">技能提升会受到角色年龄、体质、福运等因素的影响。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">技能效果</h3>
+                            <p class="mb-3">技能对游戏的影响包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>事件触发：高技能可能触发特殊事件和剧情</li>
+                                <li>对话选项：某些对话选项需要特定技能等级</li>
+                                <li>婚恋影响：技能水平会影响婚恋对象的选择和好感度</li>
+                                <li>社交地位：高技能可以提升社交地位和声望</li>
+                                <li>家庭和谐：某些技能可以提升家庭和谐度</li>
+                                <li>收入来源：高技能可以带来额外的收入</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 事件系统 -->
+                <section id="event-system" class="card">
+                    <h2 class="section-title">事件系统</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="subsection-title">事件类型</h3>
+                            <p class="mb-3">游戏中的事件类型包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>家庭事件：与家庭成员相关的事件</li>
+                                <li>社交事件：与朋友、亲戚、熟人相关的事件</li>
+                                <li>技能事件：与技能学习和应用相关的事件</li>
+                                <li>婚恋事件：与恋爱、婚姻相关的事件</li>
+                                <li>随机事件：各种随机发生的事件</li>
+                                <li>特殊事件：与家族背景、个人特质相关的特殊事件</li>
+                            </ul>
+                            <p class="mt-3">不同类型的事件用不同颜色的边框标识，方便区分。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">事件触发机制</h3>
+                            <p class="mb-3">事件触发的机制包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>时间触发：特定时间（如节日、生日）触发的事件</li>
+                                <li>条件触发：满足特定条件（如技能等级、好感度）触发的事件</li>
+                                <li>随机触发：随机发生的事件，增加游戏的不确定性</li>
+                                <li>连锁触发：一个事件的结果可能触发后续事件</li>
+                                <li>场景触发：在特定场景（如花园、闺房）触发的事件</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">事件选择</h3>
+                            <p class="mb-3">每个事件都会提供多个选择，玩家的选择会影响：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>属性变化：影响角色的各种属性</li>
+                                <li>技能提升：可能提升或降低某些技能</li>
+                                <li>好感度变化：影响NPC对主角的好感度</li>
+                                <li>后续剧情：影响后续事件的触发和发展</li>
+                                <li>家庭关系：影响与家庭成员的关系</li>
+                                <li>社会地位：影响角色的社会地位和声望</li>
+                            </ul>
+                            <p class="mt-3">选择没有绝对的对错，不同的选择会导向不同的人生轨迹。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">AI驱动剧情</h3>
+                            <p class="mb-3">游戏使用AI技术生成丰富多样的剧情：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>动态生成：根据游戏状态和玩家选择动态生成剧情</li>
+                                <li>个性化内容：根据角色的性格、背景和技能生成个性化的剧情</li>
+                                <li>连贯性保证：确保生成的剧情与游戏背景和之前的剧情连贯一致</li>
+                                <li>多样性：每次游戏都会生成不同的剧情，增加 replayability</li>
+                            </ul>
+                            <p class="mt-3">玩家可以通过API配置页面调整AI生成的参数，如创意度和生成长度。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 存档读档 -->
+                <section id="save-load" class="card">
+                    <h2 class="section-title">存档读档</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="subsection-title">存档系统</h3>
+                            <p class="mb-3">游戏提供三个存档位，玩家可以：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>保存当前游戏进度</li>
+                                <li>覆盖已有存档</li>
+                                <li>查看存档的基本信息（如角色、年龄、时间等）</li>
+                            </ul>
+                            <p class="mt-3">存档会保存游戏的所有状态，包括角色信息、技能等级、事件历史、NPC关系等。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">读档系统</h3>
+                            <p class="mb-3">读档系统允许玩家：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>读取之前保存的游戏进度</li>
+                                <li>在不同的存档之间切换</li>
+                                <li>重新体验不同的人生选择</li>
+                            </ul>
+                            <p class="mt-3">读档后，游戏会恢复到保存时的状态，玩家可以继续游戏。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">自动保存</h3>
+                            <p class="mb-3">游戏会在特定时间点自动保存：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>推进到新的年份时</li>
+                                <li>完成重要事件后</li>
+                                <li>游戏关闭前</li>
+                            </ul>
+                            <p class="mt-3">自动保存不会覆盖玩家手动保存的存档。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">存档管理</h3>
+                            <p class="mb-3">玩家可以管理自己的存档：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>删除不需要的存档</li>
+                                <li>备份重要的存档</li>
+                                <li>重命名存档</li>
+                            </ul>
+                            <p class="mt-3">建议玩家定期保存游戏，以免进度丢失。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- API使用指南 -->
+                <section id="api-usage" class="card">
+                    <h2 class="section-title">API使用指南</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="subsection-title">API配置</h3>
+                            <p class="mb-3">游戏支持多种AI服务商的API，玩家需要：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>选择API服务商（如Deepseek、火山引擎、OpenAI、硅基流动）</li>
+                                <li>输入有效的API密钥</li>
+                                <li>选择或自定义AI模型</li>
+                                <li>调整创意度和最大生成长度等参数</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">API测试</h3>
+                            <p class="mb-3">配置完成后，玩家可以：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>点击"测试连接"按钮测试API连接</li>
+                                <li>查看测试生成的示例文本</li>
+                                <li>根据测试结果调整参数</li>
+                            </ul>
+                            <p class="mt-3">测试成功后，API就可以在游戏中使用了。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">参数调整</h3>
+                            <p class="mb-3">玩家可以调整的API参数包括：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>创意度（Temperature）：控制生成内容的创意程度，值越高越有创意</li>
+                                <li>最大生成长度（Max Tokens）：控制生成文本的最大长度</li>
+                                <li>模型选择：选择不同的AI模型，获得不同的生成效果</li>
+                            </ul>
+                            <p class="mt-3">建议玩家根据自己的喜好和API的特性调整这些参数。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">API使用注意事项</h3>
+                            <p class="mb-3">使用API时需要注意：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>API密钥的安全性：不要分享自己的API密钥</li>
+                                <li>API调用限制：不同的API服务有不同的调用限制和费用</li>
+                                <li>网络连接：确保网络连接稳定，避免API调用失败</li>
+                                <li>内容审核：AI生成的内容可能需要审核，确保符合游戏主题和价值观</li>
+                            </ul>
+                            <p class="mt-3">如果API调用失败，游戏会使用预设的剧情作为备用。</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 常见问题 -->
+                <section id="faq" class="card">
+                    <h2 class="section-title">常见问题</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="subsection-title">游戏相关问题</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-bold">Q: 游戏需要联网吗？</h4>
+                                    <p>A: 游戏本身可以离线运行，但如果要使用AI生成剧情功能，需要联网并配置有效的API。</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold">Q: 游戏有时间限制吗？</h4>
+                                    <p>A: 游戏没有时间限制，玩家可以按照自己的节奏进行游戏。</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold">Q: 游戏有多个结局吗？</h4>
+                                    <p>A: 是的，游戏有多种可能的结局，取决于玩家的选择和角色的发展。</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold">Q: 可以重玩游戏吗？</h4>
+                                    <p>A: 当然可以，点击"重开新人生"按钮可以重新开始游戏，体验不同的人生。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">技术相关问题</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-bold">Q: 游戏支持哪些浏览器？</h4>
+                                    <p>A: 游戏支持所有现代浏览器，如Chrome、Firefox、Safari、Edge等。</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold">Q: 存档保存在哪里？</h4>
+                                    <p>A: 存档保存在浏览器的localStorage中，清除浏览器数据会导致存档丢失。</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold">Q: API调用失败怎么办？</h4>
+                                    <p>A: 如果API调用失败，游戏会使用预设的剧情作为备用。请检查API配置和网络连接。</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold">Q: 游戏运行缓慢怎么办？</h4>
+                                    <p>A: 请尝试关闭其他浏览器标签页，或刷新页面。如果问题持续，请检查浏览器版本和系统资源。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="subsection-title">内容相关问题</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-bold">Q: 游戏内容适合什么年龄段？</h4>
+                                    <p>A: 游戏内容适合12岁以上的玩家，主题健康，没有不适当的内容。</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold">Q: 游戏中的历史背景是否准确？</h4>
+                                    <p>A: 游戏中的历史背景是虚构的，虽然参考了真实历史，但为了游戏性做了艺术加工。</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold">Q: 游戏会更新新内容吗？</h4>
+                                    <p>A: 是的，游戏会定期更新新内容，包括新的事件、角色、技能等。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-6 px-4 mt-12">
+        <div class="container mx-auto max-w-5xl">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">吾家有女初长成</h3>
+                    <p class="text-gray-400">古风高自由度随机文字人生模拟器</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="index.html" class="text-gray-400 hover:text-white transition-colors">首页</a>
+                    <a href="index.html#about" class="text-gray-400 hover:text-white transition-colors">游戏介绍</a>
+                    <a href="api-config.html" class="text-gray-400 hover:text-white transition-colors">API接口配置</a>
+                    <a href="index.html#author" class="text-gray-400 hover:text-white transition-colors">作者信息</a>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2025 西一 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 目录导航
+        const tocItems = document.querySelectorAll('.toc-item');
+        const sections = document.querySelectorAll('section');
+        
+        tocItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+                const targetSection = document.getElementById(sectionId);
+                
+                // 滚动到目标部分
+                window.scrollTo({
+                    top: targetSection.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+                
+                // 更新目录项的活动状态
+                tocItems.forEach(toc => toc.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 滚动监听，更新目录活动状态
+        window.addEventListener('scroll', function() {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            tocItems.forEach(toc => {
+                toc.classList.remove('active');
+                if (toc.getAttribute('data-section') === current) {
+                    toc.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
