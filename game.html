@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏主界面 - 吾家有女初长成</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B0000',
+                        secondary: '#DAA520',
+                        accent: '#4B0082',
+                        light: '#FFF8DC',
+                        dark: '#2F1B14',
+                        muted: '#8B7355'
+                    },
+                    fontFamily: {
+                        sans: ['Arial', 'sans-serif'],
+                        serif: ['SimSun', 'serif'],
+                        fangsong: ['FangSong', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            }
+            .text-shadow-sm {
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            }
+            .border-double-gold {
+                box-shadow: 0 0 0 2px #DAA520, 0 0 0 4px #FFF8DC;
+            }
+            .scrollbar-hidden::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hidden {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+        
+        /* 自定义动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(218, 165, 32, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(218, 165, 32, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(218, 165, 32, 0.5); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        .animate-slideIn {
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s infinite;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-glow {
+            animation: glow 2s infinite;
+        }
+        
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        /* 古风按钮样式 */
+        .btn-ancient {
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .btn-ancient:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .btn-ancient:hover:before {
+            left: 100%;
+        }
+        
+        .btn-ancient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn-ancient:active {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* 卡片样式 */
+        .ancient-card {
+            background-color: rgba(255, 248, 220, 0.9);
+            border: 1px solid #DAA520;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .ancient-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 属性条样式 */
+        .attribute-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e5e7eb;
+            overflow: hidden;
+        }
+        
+        .attribute-bar-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        /* 通知提示样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background-color: #10b981;
+        }
+        
+        .notification.error {
+            background-color: #ef4444;
+        }
+        
+        .notification.warning {
+            background-color: #f59e0b;
+        }
+        
+        .notification.info {
+            background-color: #3b82f6;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: #FFF8DC;
+            margin: 10% auto;
+            padding: 20px;
+            border: 2px solid #DAA520;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+        }
+        
+        /* 场景地图样式 */
+        .scene-map {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background-color: #f0e6d2;
+            border: 1px solid #DAA520;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .scene-location {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 2px solid #DAA520;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 12px;
+            padding: 5px;
+        }
+        
+        .scene-location:hover {
+            transform: scale(1.1);
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(218, 165, 32, 0.8);
+        }
+        
+        /* 事件类型颜色 */
+        .event-type-family {
+            border-left: 4px solid #8B0000;
+        }
+        
+        .event-type-social {
+            border-left: 4px solid #4B0082;
+        }
+        
+        .event-type-skill {
+            border-left: 4px solid #DAA520;
+        }
+        
+        .event-type-romance {
+            border-left: 4px solid #FF69B4;
+        }
+        
+        .event-type-random {
+            border-left: 4px solid #808080;
+        }
+        
+        /* 关系网样式 */
+        .relationship-network {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background-color: #f0e6d2;
+            border: 1px solid #DAA520;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .relationship-node {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: white;
+            border: 2px solid #DAA520;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 12px;
+            padding: 5px;
+        }
+        
+        .relationship-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(218, 165, 32, 0.8);
+        }
+        
+        .relationship-line {
+            position: absolute;
+            height: 2px;
+            background-color: #DAA520;
+            transform-origin: 0 0;
+        }
+        
+        /* 季节背景 */
+        .season-spring {
+            background-color: #f0fdf4;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="%2322c55e" opacity="0.3"/></svg>');
+        }
+        
+        .season-summer {
+            background-color: #ecfdf5;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="%2310b981" opacity="0.3"/></svg>');
+        }
+        
+        .season-autumn {
+            background-color: #fffbeb;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="%23f59e0b" opacity="0.3"/></svg>');
+        }
+        
+        .season-winter {
+            background-color: #f8fafc;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="%2364748b" opacity="0.3"/></svg>');
+        }
+    </style>
+</head>
+<body class="bg-light font-serif text-dark min-h-screen season-spring">
+    <!-- 顶部时间面板 -->
+    <header class="bg-dark text-light shadow-lg py-3">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap items-center justify-between">
+                <!-- 游戏标题 -->
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-secondary mr-2">吾家有女初长成</span>
+                    <i class="fa fa-gamepad text-secondary text-xl"></i>
+                </div>
+                
+                <!-- 时间信息 -->
+                <div class="flex items-center space-x-6">
+                    <div class="text-center">
+                        <p class="text-xs text-muted">年号</p>
+                        <p class="text-lg font-bold text-secondary" id="game-reign-year">乾隆</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-muted">年份</p>
+                        <p class="text-lg font-bold text-secondary" id="game-year">元年</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-muted">季节</p>
+                        <p class="text-lg font-bold text-secondary" id="game-season">春季</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-muted">年龄</p>
+                        <p class="text-lg font-bold text-secondary" id="game-age">12岁</p>
+                    </div>
+                </div>
+                
+                <!-- 菜单按钮 -->
+                <div>
+                    <button id="menu-button" class="text-light hover:text-secondary focus:outline-none">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- 左侧信息栏 -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- 个人信息卡片 -->
+                <div class="ancient-card p-4">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-user mr-2"></i>个人信息
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mr-4">
+                                <i class="fa fa-female text-2xl text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold" id="protagonist-name">李清婉</h3>
+                                <p class="text-sm text-muted" id="protagonist-rank">三女</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <p><span class="font-bold">容貌：</span><span id="protagonist-looks">眉目如画，肌肤白皙</span></p>
+                            <p><span class="font-bold">性格：</span><span id="protagonist-personality">温柔聪慧，略有些腼腆</span></p>
+                            <p><span class="font-bold">情感状态：</span><span id="protagonist-relationship">待字闺中</span></p>
+                        </div>
+                        <div class="space-y-2">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span>健康</span>
+                                    <span id="health-value">85</span>
+                                </div>
+                                <div class="attribute-bar">
+                                    <div id="health-bar" class="attribute-bar-fill bg-red-500" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span>资产</span>
+                                    <span id="wealth-value">中等</span>
+                                </div>
+                                <div class="attribute-bar">
+                                    <div id="wealth-bar" class="attribute-bar-fill bg-yellow-500" style="width: 60%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 技能面板 -->
+                <div class="ancient-card p-4">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-book mr-2"></i>技能面板
+                    </h2>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>女红</span>
+                                <span id="skill-sewing-value">30</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div id="skill-sewing-bar" class="attribute-bar-fill bg-pink-500" style="width: 30%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>烹饪</span>
+                                <span id="skill-cooking-value">25</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div id="skill-cooking-bar" class="attribute-bar-fill bg-orange-500" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>诗词</span>
+                                <span id="skill-poetry-value">45</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div id="skill-poetry-bar" class="attribute-bar-fill bg-purple-500" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>书画</span>
+                                <span id="skill-calligraphy-value">40</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div id="skill-calligraphy-bar" class="attribute-bar-fill bg-blue-500" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>音律</span>
+                                <span id="skill-music-value">35</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div id="skill-music-bar" class="attribute-bar-fill bg-green-500" style="width: 35%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>礼仪</span>
+                                <span id="skill-etiquette-value">50</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div id="skill-etiquette-bar" class="attribute-bar-fill bg-yellow-500" style="width: 50%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 中间核心内容区 -->
+            <div class="lg:col-span-6 space-y-6">
+                <!-- 年度核心事件列表 -->
+                <div class="ancient-card p-4">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-calendar mr-2"></i>年度核心事件
+                    </h2>
+                    <div class="space-y-4 max-h-80 overflow-y-auto scrollbar-hidden" id="core-events-container">
+                        <div class="bg-white bg-opacity-50 p-3 rounded-lg shadow event-type-family">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-lg font-bold">春节家宴</h3>
+                                <span class="text-xs text-muted">春季</span>
+                            </div>
+                            <p class="mt-2">今年的春节家宴格外热闹，全家团聚在一起吃年夜饭，父亲还特意准备了烟花。你和姐妹们一起放鞭炮，玩得很开心。</p>
+                            <div class="mt-3 flex justify-end">
+                                <button class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                                    查看详情
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-50 p-3 rounded-lg shadow event-type-skill">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-lg font-bold">母亲教刺绣</h3>
+                                <span class="text-xs text-muted">春季</span>
+                            </div>
+                            <p class="mt-2">母亲看你对女红有些兴趣，决定亲自教你刺绣。她耐心地教你如何穿针引线，如何绣出简单的图案。在她的指导下，你的女红技能有了小幅提升。</p>
+                            <div class="mt-3 flex justify-end">
+                                <button class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                                    查看详情
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-50 p-3 rounded-lg shadow event-type-social">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-lg font-bold">邻居来访</h3>
+                                <span class="text-xs text-muted">春季</span>
+                            </div>
+                            <p class="mt-2">隔壁王夫人带着她的小女儿来家里做客。王夫人和母亲在客厅聊天，你则带着小王小姐在后花园玩耍。通过这次互动，你学会了如何与同龄人相处。</p>
+                            <div class="mt-3 flex justify-end">
+                                <button class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                                    查看详情
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 人物互动事件列表 -->
+                <div class="ancient-card p-4">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-comments mr-2"></i>人物互动事件
+                    </h2>
+                    <div class="space-y-4 max-h-80 overflow-y-auto scrollbar-hidden" id="interaction-events-container">
+                        <div class="bg-white bg-opacity-50 p-3 rounded-lg shadow">
+                            <div class="flex items-center mb-2">
+                                <div class="w-8 h-8 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mr-2">
+                                    <i class="fa fa-female text-sm text-secondary"></i>
+                                </div>
+                                <h3 class="text-lg font-bold">二姐邀请你出去玩</h3>
+                            </div>
+                            <p>二姐偷偷告诉你，她发现了一个有趣的地方，想带你一起去探险。你要答应她吗？</p>
+                            <div class="mt-3 flex justify-end space-x-2">
+                                <button class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                                    答应
+                                </button>
+                                <button class="btn-ancient bg-gray-500 hover:bg-gray-700 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                                    拒绝
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-50 p-3 rounded-lg shadow">
+                            <div class="flex items-center mb-2">
+                                <div class="w-8 h-8 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mr-2">
+                                    <i class="fa fa-male text-sm text-primary"></i>
+                                </div>
+                                <h3 class="text-lg font-bold">父亲询问你的学习情况</h3>
+                            </div>
+                            <p>父亲把你叫到书房，询问你最近的学习情况。他看起来对你的进步很关心。你要如何回答？</p>
+                            <div class="mt-3 flex justify-end space-x-2">
+                                <button class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                                    如实回答
+                                </button>
+                                <button class="btn-ancient bg-gray-500 hover:bg-gray-700 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                                    夸大其词
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 家庭动态小报 -->
+                <div class="ancient-card p-4">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-newspaper-o mr-2"></i>家庭动态小报
+                    </h2>
+                    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow">
+                        <h3 class="text-lg font-bold text-center border-b border-gray-300 pb-2 mb-4">李家动态</h3>
+                        <div class="space-y-3">
+                            <p><i class="fa fa-circle text-xs text-primary mr-2"></i> <span class="font-bold">大姐回娘家</span>：大姐带着小外甥回娘家省亲，带来了许多礼物。</p>
+                            <p><i class="fa fa-circle text-xs text-secondary mr-2"></i> <span class="font-bold">父亲升官</span>：父亲因教学有功，被当地知府赏识，授予了更高的官职。</p>
+                            <p><i class="fa fa-circle text-xs text-accent mr-2"></i> <span class="font-bold">二姐定亲</span>：二姐的婚事已定，对方是城中有名的才子。</p>
+                            <p><i class="fa fa-circle text-xs text-muted mr-2"></i> <span class="font-bold">宅院扩建</span>：家里决定扩建宅院，增加一个花园和书房。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我的手记 -->
+                <div class="ancient-card p-4">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-pencil mr-2"></i>我的手记
+                    </h2>
+                    <div class="bg-white bg-opacity-50 p-4 rounded-lg shadow">
+                        <textarea id="journal-text" class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="在这里记录你的心情和想法..."></textarea>
+                        <div class="mt-3 flex justify-end">
+                            <button id="save-journal-btn" class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                                保存手记
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧功能区 -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- 新人物登场面板 -->
+                <div class="ancient-card p-4">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-user-plus mr-2"></i>新人物登场
+                    </h2>
+                    <div class="bg-white bg-opacity-50 p-3 rounded-lg shadow">
+                        <div class="flex items-center mb-3">
+                            <div class="w-12 h-12 rounded-full bg-accent bg-opacity-10 flex items-center justify-center mr-3">
+                                <i class="fa fa-male text-lg text-accent"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold">张公子</h3>
+                                <p class="text-sm text-muted">邻居家的公子</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-3">张家是当地的富商，张公子是张家的独子，今年15岁，据说才学出众，是当地有名的才子。</p>
+                        <div class="flex justify-end">
+                            <button id="view-character-btn" class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                                查看详情
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 事件记录回顾 -->
+                <div class="ancient-card p-4">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-history mr-2"></i>事件记录回顾
+                    </h2>
+                    <div class="space-y-3 max-h-60 overflow-y-auto scrollbar-hidden">
+                        <div class="bg-white bg-opacity-50 p-2 rounded-lg shadow text-sm">
+                            <p class="font-bold">春节家宴</p>
+                            <p class="text-xs text-muted">乾隆元年 春季</p>
+                        </div>
+                        <div class="bg-white bg-opacity-50 p-2 rounded-lg shadow text-sm">
+                            <p class="font-bold">母亲教刺绣</p>
+                            <p class="text-xs text-muted">乾隆元年 春季</p>
+                        </div>
+                        <div class="bg-white bg-opacity-50 p-2 rounded-lg shadow text-sm">
+                            <p class="font-bold">邻居来访</p>
+                            <p class="text-xs text-muted">乾隆元年 春季</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 书信箱 -->
+                <div class="ancient-card p-4" id="letters-container">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-envelope mr-2"></i>书信箱
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="bg-white bg-opacity-50 p-3 rounded-lg shadow">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold">大姐的信</h3>
+                                <span class="text-xs text-muted">3天前</span>
+                            </div>
+                            <p class="text-sm mt-1 truncate">妹妹，我在夫家一切都好，很想念你们...</p>
+                            <div class="mt-2 flex justify-end">
+                                <button class="text-primary hover:text-red-800 text-sm">
+                                    阅读
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-50 p-3 rounded-lg shadow">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold">父亲的信</h3>
+                                <span class="text-xs text-muted">1周前</span>
+                            </div>
+                            <p class="text-sm mt-1 truncate">婉儿，最近学习可有长进？为父很是挂念...</p>
+                            <div class="mt-2 flex justify-end">
+                                <button class="text-primary hover:text-red-800 text-sm">
+                                    阅读
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 家宅地图可视化 -->
+                <div class="ancient-card p-4">
+                    <h2 class="text-xl font-bold text-primary mb-4 flex items-center">
+                        <i class="fa fa-map mr-2"></i>家宅地图
+                    </h2>
+                    <div class="scene-map">
+                        <div class="scene-location" style="top: 20px; left: 50px;" data-location="main-hall">
+                            正厅
+                        </div>
+                        <div class="scene-location" style="top: 100px; left: 20px;" data-location="kitchen">
+                            厨房
+                        </div>
+                        <div class="scene-location" style="top: 100px; left: 100px;" data-location="garden">
+                            花园
+                        </div>
+                        <div class="scene-location" style="top: 180px; left: 50px;" data-location="bedroom">
+                            闺房
+                        </div>
+                        <div class="scene-location" style="top: 20px; left: 150px;" data-location="study">
+                            书房
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 底部操作栏 -->
+    <footer class="bg-dark text-light py-4 mt-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap items-center justify-between">
+                <div class="w-full md:w-auto mb-4 md:mb-0">
+                    <div class="flex space-x-4">
+                        <button id="next-year-btn" class="btn-ancient bg-secondary hover:bg-yellow-600 text-dark font-bold py-2 px-6 rounded-lg transition-colors duration-300 inline-flex items-center">
+                            <i class="fa fa-arrow-right mr-2"></i>
+                            <span>推进下一年</span>
+                        </button>
+                        <button id="view-relationships-btn" class="btn-ancient bg-primary hover:bg-red-800 text-light font-bold py-2 px-6 rounded-lg transition-colors duration-300 inline-flex items-center">
+                            <i class="fa fa-users mr-2"></i>
+                            <span>人物关系</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full md:w-auto flex justify-center md:justify-end space-x-4">
+                    <button id="view-skills-btn" class="btn-ancient bg-accent hover:bg-indigo-800 text-light font-bold py-2 px-6 rounded-lg transition-colors duration-300 inline-flex items-center">
+                        <i class="fa fa-book mr-2"></i>
+                        <span>资产技能</span>
+                    </button>
+                    <button id="save-game-btn" class="btn-ancient bg-green-600 hover:bg-green-800 text-light font-bold py-2 px-6 rounded-lg transition-colors duration-300 inline-flex items-center">
+                        <i class="fa fa-save mr-2"></i>
+                        <span>存档</span>
+                    </button>
+                    <button id="load-game-btn" class="btn-ancient bg-gray-600 hover:bg-gray-800 text-light font-bold py-2 px-6 rounded-lg transition-colors duration-300 inline-flex items-center">
+                        <i class="fa fa-folder-open mr-2"></i>
+                        <span>读档</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 模态框 -->
+    <!-- 人物详情模态框 -->
+    <div id="character-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-2xl font-bold text-primary mb-4">人物详情</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-20 h-20 rounded-full bg-accent bg-opacity-10 flex items-center justify-center mr-4">
+                            <i class="fa fa-male text-3xl text-accent"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">张公子</h3>
+                            <p class="text-muted">张逸轩</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <p><span class="font-bold">年龄：</span>15岁</p>
+                        <p><span class="font-bold">身份：</span>富商之子</p>
+                        <p><span class="font-bold">性格：</span>温文尔雅，才华横溢</p>
+                        <p><span class="font-bold">特长：</span>诗词，书法</p>
+                        <p><span class="font-bold">背景：</span>张家是苏州城有名的富商，经营绸缎生意。张公子是独子，从小受到良好教育，才华横溢，是当地有名的才子。</p>
+                        <p><span class="font-bold">与主角关系：</span>尚未相识</p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-3">互动记录</h3>
+                    <div class="space-y-2 max-h-60 overflow-y-auto">
+                        <p class="text-muted italic">暂无互动记录</p>
+                    </div>
+                    <h3 class="text-lg font-bold mt-4 mb-3">好感度</h3>
+                    <div class="flex items-center">
+                        <div class="w-full bg-gray-300 rounded-full h-4 mr-2">
+                            <div class="bg-accent h-4 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <span>0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 人物关系网模态框 -->
+    <div id="relationships-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-2xl font-bold text-primary mb-4">人物关系网</h2>
+            <div class="relationship-network">
+                <!-- 关系网将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 资产技能模态框 -->
+    <div id="skills-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-2xl font-bold text-primary mb-4">资产与技能详情</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-bold mb-3">家族资产</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>房产</span>
+                                <span>三进四合院</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div class="attribute-bar-fill bg-yellow-500" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>田产</span>
+                                <span>中等</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div class="attribute-bar-fill bg-yellow-500" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>现银</span>
+                                <span>500两</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div class="attribute-bar-fill bg-yellow-500" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>物品</span>
+                                <span>丰富</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div class="attribute-bar-fill bg-yellow-500" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-3">个人技能详情</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>女红</span>
+                                <span>30 - 初学乍练</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div class="attribute-bar-fill bg-pink-500" style="width: 30%"></div>
+                            </div>
+                            <p class="text-xs text-muted mt-1">你刚刚开始学习女红，能够完成简单的刺绣图案。</p>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>烹饪</span>
+                                <span>25 - 初学乍练</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div class="attribute-bar-fill bg-orange-500" style="width: 25%"></div>
+                            </div>
+                            <p class="text-xs text-muted mt-1">你只会做一些简单的饭菜，还需要更多练习。</p>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>诗词</span>
+                                <span>45 - 略有所成</span>
+                            </div>
+                            <div class="attribute-bar">
+                                <div class="attribute-bar-fill bg-purple-500" style="width: 45%"></div>
+                            </div>
+                            <p class="text-xs text-muted mt-1">你对诗词有一定的理解，能够背诵许多经典诗词，也尝试写一些简单的诗句。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 存档读档模态框 -->
+    <div id="save-load-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-2xl font-bold text-primary mb-4">存档与读档</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="ancient-card p-4">
+                    <h3 class="text-lg font-bold mb-3">存档位 1</h3>
+                    <div class="space-y-2">
+                        <p><span class="font-bold">角色：</span>李清婉</p>
+                        <p><span class="font-bold">时间：</span>乾隆元年 春季</p>
+                        <p><span class="font-bold">年龄：</span>12岁</p>
+                        <p><span class="font-bold">保存时间：</span>2024-01-15 14:30</p>
+                    </div>
+                    <div class="mt-4 flex justify-between">
+                        <button class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                            覆盖存档
+                        </button>
+                        <button class="btn-ancient bg-secondary hover:bg-yellow-600 text-dark text-sm py-1 px-4 rounded transition-colors duration-300">
+                            读取存档
+                        </button>
+                    </div>
+                </div>
+                <div class="ancient-card p-4">
+                    <h3 class="text-lg font-bold mb-3">存档位 2</h3>
+                    <div class="space-y-2">
+                        <p><span class="font-bold">角色：</span>-</p>
+                        <p><span class="font-bold">时间：</span>-</p>
+                        <p><span class="font-bold">年龄：</span>-</p>
+                        <p><span class="font-bold">保存时间：</span>-</p>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                            保存到此处
+                        </button>
+                    </div>
+                </div>
+                <div class="ancient-card p-4">
+                    <h3 class="text-lg font-bold mb-3">存档位 3</h3>
+                    <div class="space-y-2">
+                        <p><span class="font-bold">角色：</span>-</p>
+                        <p><span class="font-bold">时间：</span>-</p>
+                        <p><span class="font-bold">年龄：</span>-</p>
+                        <p><span class="font-bold">保存时间：</span>-</p>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">
+                            保存到此处
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 场景事件模态框 -->
+    <div id="scene-event-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-2xl font-bold text-primary mb-4" id="scene-event-title">花园事件</h2>
+            <div class="space-y-4">
+                <p id="scene-event-description">你来到花园，看到满院的春色，心情十分愉悦。突然，你发现角落里有一只受伤的小鸟，它的翅膀似乎受了伤，无法飞翔。</p>
+                <div class="flex justify-end space-x-4" id="scene-event-choices">
+                    <button class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                        帮助小鸟
+                    </button>
+                    <button class="btn-ancient bg-gray-500 hover:bg-gray-700 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                        不管它
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 事件详情模态框 -->
+    <div id="event-detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-2xl font-bold text-primary mb-4" id="event-detail-title">事件详情</h2>
+            <div class="space-y-4">
+                <p id="event-detail-description" class="text-dark"></p>
+                <div class="ancient-card p-4">
+                    <h3 class="text-lg font-bold mb-2">影响结果</h3>
+                    <div id="event-impact-result" class="space-y-1 text-sm"></div>
+                </div>
+                <div class="flex justify-end">
+                    <button id="event-detail-confirm" class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                        确认
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 书信详情模态框 -->
+    <div id="letter-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-2xl font-bold text-primary mb-4" id="letter-title">来信</h2>
+            <div class="space-y-4">
+                <p id="letter-content" class="text-dark leading-7"></p>
+                <div class="flex justify-end">
+                    <button id="letter-close" class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 菜单模态框 -->
+    <div id="menu-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="text-2xl font-bold text-primary mb-4">游戏菜单</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button class="btn-ancient bg-accent hover:bg-indigo-800 text-light py-2 px-4 rounded-lg" id="menu-assets-btn">
+                    资产技能
+                </button>
+                <button class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-4 rounded-lg" id="menu-relationships-btn">
+                    人物关系
+                </button>
+                <button class="btn-ancient bg-green-600 hover:bg-green-800 text-light py-2 px-4 rounded-lg" id="menu-save-btn">
+                    存档
+                </button>
+                <button class="btn-ancient bg-gray-600 hover:bg-gray-800 text-light py-2 px-4 rounded-lg" id="menu-load-btn">
+                    读档
+                </button>
+                <button class="btn-ancient bg-secondary hover:bg-yellow-600 text-dark py-2 px-4 rounded-lg" id="menu-restart-btn">
+                    重开新人生
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 通知提示 -->
+    <div id="notification" class="notification"></div>
+    
+    <!-- JavaScript -->
+    <script>
+        // 显示通知
+        function showNotification(message, type = 'info', duration = 3000) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            
+            // 显示通知
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            // 自动隐藏
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.textContent = '', 300);
+            }, duration);
+        }
+        
+        // 模态框控制
+        const modals = document.querySelectorAll('.modal');
+        const closeButtons = document.querySelectorAll('.close');
+        
+        // 打开模态框
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        
+        // 关闭模态框
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // 为所有关闭按钮添加事件监听器
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.closest('.modal').style.display = 'none';
+            });
+        });
+        // 书信详情关闭
+        document.getElementById('letter-close').addEventListener('click', () => closeModal('letter-modal'));
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', (event) => {
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // 绑定模态框按钮
+        document.getElementById('view-character-btn').addEventListener('click', () => openModal('character-modal'));
+        document.getElementById('view-relationships-btn').addEventListener('click', () => { renderRelationships(); openModal('relationships-modal'); });
+        document.getElementById('view-skills-btn').addEventListener('click', () => openModal('skills-modal'));
+        document.getElementById('save-game-btn').addEventListener('click', () => openModal('save-load-modal'));
+        document.getElementById('load-game-btn').addEventListener('click', () => openModal('save-load-modal'));
+        // 菜单按钮绑定
+        document.getElementById('menu-button').addEventListener('click', () => openModal('menu-modal'));
+        document.getElementById('menu-assets-btn').addEventListener('click', () => { closeModal('menu-modal'); openModal('skills-modal'); });
+        document.getElementById('menu-relationships-btn').addEventListener('click', () => { closeModal('menu-modal'); renderRelationships(); openModal('relationships-modal'); });
+        document.getElementById('menu-save-btn').addEventListener('click', () => { closeModal('menu-modal'); openModal('save-load-modal'); });
+        document.getElementById('menu-load-btn').addEventListener('click', () => { closeModal('menu-modal'); openModal('save-load-modal'); });
+        document.getElementById('menu-restart-btn').addEventListener('click', () => { closeModal('menu-modal'); window.location.href = 'create-role.html'; });
+        
+        // 场景位置点击事件
+        const sceneLocations = document.querySelectorAll('.scene-location');
+        sceneLocations.forEach(location => {
+            location.addEventListener('click', () => {
+                const locationType = location.getAttribute('data-location');
+                let title, description, choices;
+                
+                // 根据不同位置设置不同事件
+                switch(locationType) {
+                    case 'main-hall':
+                        title = '正厅事件';
+                        description = '你来到正厅，看到父亲正在与一位客人交谈。客人看起来是一位官员，他们似乎在讨论一些重要的事情。父亲看到你，微笑着向你招手。';
+                        choices = `
+                            <button class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                过去问候
+                            </button>
+                            <button class="btn-ancient bg-gray-500 hover:bg-gray-700 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                悄悄离开
+                            </button>
+                        `;
+                        break;
+                    case 'kitchen':
+                        title = '厨房事件';
+                        description = '你来到厨房，看到厨娘正在准备晚餐。她看起来很忙，需要一些帮助。你可以选择帮忙或者只是看看。';
+                        choices = `
+                            <button class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                帮忙做饭
+                            </button>
+                            <button class="btn-ancient bg-gray-500 hover:bg-gray-700 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                只是看看
+                            </button>
+                        `;
+                        break;
+                    case 'garden':
+                        title = '花园事件';
+                        description = '你来到花园，看到满院的春色，心情十分愉悦。突然，你发现角落里有一只受伤的小鸟，它的翅膀似乎受了伤，无法飞翔。';
+                        choices = `
+                            <button class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                帮助小鸟
+                            </button>
+                            <button class="btn-ancient bg-gray-500 hover:bg-gray-700 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                不管它
+                            </button>
+                        `;
+                        break;
+                    case 'bedroom':
+                        title = '闺房事件';
+                        description = '你回到自己的闺房，看到书桌上有一封信。信没有署名，但字迹看起来很熟悉。你要打开看看吗？';
+                        choices = `
+                            <button class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                打开信件
+                            </button>
+                            <button class="btn-ancient bg-gray-500 hover:bg-gray-700 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                不看，放回原处
+                            </button>
+                        `;
+                        break;
+                    case 'study':
+                        title = '书房事件';
+                        description = '你来到书房，看到书架上摆满了各种书籍。父亲平时不允许你随便进入书房，但现在他不在。你可以选择翻阅一些书籍或者离开。';
+                        choices = `
+                            <button class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                翻阅书籍
+                            </button>
+                            <button class="btn-ancient bg-gray-500 hover:bg-gray-700 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                离开书房
+                            </button>
+                        `;
+                        break;
+                    default:
+                        title = '未知事件';
+                        description = '你来到了一个未知的地方，这里似乎没有什么特别的事情发生。';
+                        choices = `
+                            <button class="btn-ancient bg-primary hover:bg-red-800 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                四处看看
+                            </button>
+                            <button class="btn-ancient bg-gray-500 hover:bg-gray-700 text-light py-2 px-6 rounded-lg transition-colors duration-300">
+                                离开这里
+                            </button>
+                        `;
+                }
+                
+                // 更新模态框内容
+                document.getElementById('scene-event-title').textContent = title;
+                document.getElementById('scene-event-description').textContent = description;
+                document.getElementById('scene-event-choices').innerHTML = choices;
+                
+                // 打开模态框
+                openModal('scene-event-modal');
+                
+                // 为新添加的按钮添加事件监听器
+                const choiceButtons = document.querySelectorAll('#scene-event-choices button');
+                choiceButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        // 关闭模态框
+                        closeModal('scene-event-modal');
+                        
+                        // 显示选择结果通知
+                        const choice = button.textContent.trim();
+                        showNotification(`你选择了"${choice}"`, 'info');
+                        
+                        // 根据选择更新游戏状态
+                        // 这里可以添加具体的游戏逻辑
+                    });
+                });
+            });
+        });
+        
+        // 核心事件详情与技能影响
+        const eventImpactMap = {
+            '春节家宴': {
+                description: '全家团聚，其乐融融。你在礼仪与待客中有所体悟。',
+                impacts: [{ type: 'skill', key: 'etiquette', delta: +3 }]
+            },
+            '母亲教刺绣': {
+                description: '母亲耐心教导，你在刺绣针法上进步明显。',
+                impacts: [{ type: 'skill', key: 'sewing', delta: +5 }]
+            },
+            '邻居来访': {
+                description: '与同龄人相处融洽，你的社交能力有所提升。',
+                impacts: [{ type: 'skill', key: 'music', delta: +2 }, { type: 'relationship', key: 'neighbor', delta: +2 }]
+            }
+        };
+        
+        function clamp(v, min = 0, max = 100) { return Math.max(min, Math.min(max, v)); }
+        
+        function applyImpactToUIAndData(impacts) {
+            const saved = localStorage.getItem('gameData');
+            const data = saved ? JSON.parse(saved) : null;
+            const changes = [];
+            impacts.forEach(impact => {
+                if (impact.type === 'skill' && data) {
+                    const cur = data.protagonist.skills[impact.key] ?? 0;
+                    const next = clamp(cur + impact.delta);
+                    data.protagonist.skills[impact.key] = next;
+                    const valEl = document.getElementById(`skill-${impact.key}-value`);
+                    const barEl = document.getElementById(`skill-${impact.key}-bar`);
+                    if (valEl) valEl.textContent = next;
+                    if (barEl) barEl.style.width = `${next}%`;
+                    changes.push(`${impact.key} ${impact.delta > 0 ? '+' : ''}${impact.delta}`);
+                } else if (impact.type === 'relationship' && data) {
+                    if (!data.relationships) data.relationships = {};
+                    const cur = data.relationships[impact.key]?.intimacy ?? 0;
+                    const next = clamp(cur + impact.delta, 0, 100);
+                    const name = data.relationships[impact.key]?.name ?? impact.key;
+                    data.relationships[impact.key] = { name, intimacy: next };
+                    changes.push(`与${name}好感 ${impact.delta > 0 ? '+' : ''}${impact.delta}`);
+                }
+            });
+            if (data) {
+                if (!data.events) data.events = [];
+                data.events.push({ time: Date.now(), type: 'core', changes });
+                localStorage.setItem('gameData', JSON.stringify(data));
+            }
+            const result = document.getElementById('event-impact-result');
+            if (result) {
+                result.innerHTML = changes.map(c => `<p>${c}</p>`).join('');
+            }
+        }
+        
+        const keywordSkillMap = [
+            { k: ['刺绣','女红','绣'], skill: 'sewing', delta: 3 },
+            { k: ['烹饪','做饭','厨'], skill: 'cooking', delta: 2 },
+            { k: ['诗','词','吟咏'], skill: 'poetry', delta: 2 },
+            { k: ['书画','绘','笔墨'], skill: 'calligraphy', delta: 2 },
+            { k: ['音律','琴','曲'], skill: 'music', delta: 2 },
+            { k: ['礼','拜访','宴'], skill: 'etiquette', delta: 2 }
+        ];
+        function impactsFromText(text) {
+            const lower = text || '';
+            const res = [];
+            keywordSkillMap.forEach(m => {
+                if (m.k.some(w => lower.includes(w))) res.push({ type: 'skill', key: m.skill, delta: m.delta });
+            });
+            return res;
+        }
+        
+        async function deriveKey(pass, salt) {
+            const enc = new TextEncoder().encode(pass);
+            const baseKey = await crypto.subtle.importKey('raw', enc, 'PBKDF2', false, ['deriveKey']);
+            return crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+                baseKey,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['decrypt']
+            );
+        }
+        async function decryptWithPass(pass, payload) {
+            if (!payload) return '';
+            const salt = Uint8Array.from(atob(payload.s || ''), c => c.charCodeAt(0));
+            const iv = Uint8Array.from(atob(payload.i || ''), c => c.charCodeAt(0));
+            const ct = Uint8Array.from(atob(payload.c || ''), c => c.charCodeAt(0));
+            const key = await deriveKey(pass, salt);
+            const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+            return new TextDecoder().decode(plain);
+        }
+        async function readApiConfig() {
+            const cfg = JSON.parse(localStorage.getItem('apiConfig') || '{}');
+            if (!cfg.provider || !cfg.apiBase || (!cfg.model && cfg.provider !== 'custom')) return null;
+            const pass = sessionStorage.getItem('apiPassphraseSession') || '';
+            const apiKey = cfg.apiKeyEnc && pass ? await decryptWithPass(pass, cfg.apiKeyEnc) : '';
+            if (!apiKey) return null;
+            return { provider: cfg.provider, apiBase: cfg.apiBase, model: cfg.model === 'custom' ? (cfg.customModel || '') : cfg.model, apiKey };
+        }
+        async function fetchAIEvents(prompt, cfg) {
+            const url = `${cfg.apiBase.replace(/\/$/, '')}/chat/completions`;
+            const headers = { 'Authorization': `Bearer ${cfg.apiKey}`, 'Content-Type': 'application/json' };
+            const body = {
+                model: cfg.model,
+                messages: [
+                    { role: 'system', content: '你是一位古风文字人生游戏事件生成器，仅返回JSON格式：{"events":[{"title":"","description":""},...]}' },
+                    { role: 'user', content: prompt }
+                ],
+                temperature: 0.7,
+                max_tokens: 600,
+                top_p: 1
+            };
+            const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const json = await res.json();
+            const content = json?.choices?.[0]?.message?.content || '';
+            let data;
+            try { data = JSON.parse(content); } catch {
+                const m = content.match(/\{[\s\S]*\}/);
+                data = m ? JSON.parse(m[0]) : null;
+            }
+            if (!data || !Array.isArray(data.events)) throw new Error('解析失败');
+            return data.events.slice(0, 3);
+        }
+        function localEventsFallback(ctx) {
+            const base = [
+                { title: '春日踏青', description: `在${ctx.city}郊外踏青，心旷神怡。` },
+                { title: '家学温课', description: `父亲督学，${ctx.name}复习诗书，略有精进。` },
+                { title: '邻里相访', description: `与邻家小姐相谈甚欢，礼数得体。` }
+            ];
+            return base;
+        }
+        function renderEventsToContainer(events) {
+            const container = document.getElementById('core-events-container');
+            container.innerHTML = events.map(ev => `
+                <div class="bg-white bg-opacity-50 p-3 rounded-lg shadow">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-lg font-bold">${ev.title}</h3>
+                        <span class="text-xs text-muted">${document.getElementById('game-season').textContent}</span>
+                    </div>
+                    <p class="mt-2">${ev.description}</p>
+                    <div class="mt-3 flex justify-end">
+                        <button class="btn-ancient bg-primary hover:bg-red-800 text-light text-sm py-1 px-4 rounded transition-colors duration-300">查看详情</button>
+                    </div>
+                </div>
+            `).join('');
+            attachDynamicEventHandlers(events);
+        }
+        function attachDynamicEventHandlers(events) {
+            const buttons = document.querySelectorAll('#core-events-container .btn-ancient');
+            buttons.forEach((btn, idx) => {
+                btn.addEventListener('click', () => {
+                    const ev = events[idx];
+                    const title = ev.title;
+                    const detail = ev.description;
+                    const staticImpacts = eventImpactMap[title]?.impacts ?? [];
+                    const autoImpacts = staticImpacts.length ? staticImpacts : impactsFromText(detail);
+                    document.getElementById('event-detail-title').textContent = title;
+                    document.getElementById('event-detail-description').textContent = detail;
+                    document.getElementById('event-impact-result').innerHTML = '';
+                    openModal('event-detail-modal');
+                    const confirmBtn = document.getElementById('event-detail-confirm');
+                    confirmBtn.onclick = () => {
+                        applyImpactToUIAndData(autoImpacts);
+                        const saved = localStorage.getItem('gameData');
+                        const data = saved ? JSON.parse(saved) : null;
+                        if (data) {
+                            if (!data.events) data.events = [];
+                            data.events.push({ time: Date.now(), type: 'core', title, description: detail });
+                            localStorage.setItem('gameData', JSON.stringify(data));
+                        }
+                        closeModal('event-detail-modal');
+                        showNotification('影响已应用', 'success');
+                    };
+                });
+            });
+        }
+        
+        document.querySelectorAll('#core-events-container .btn-ancient').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const card = btn.closest('.bg-white');
+                const title = card.querySelector('h3')?.textContent?.trim() ?? '事件';
+                const detail = eventImpactMap[title]?.description ?? '详细内容暂未记录，但这次经历对你产生了影响。';
+                const impacts = eventImpactMap[title]?.impacts ?? [];
+                document.getElementById('event-detail-title').textContent = title;
+                document.getElementById('event-detail-description').textContent = detail;
+                document.getElementById('event-impact-result').innerHTML = '';
+                openModal('event-detail-modal');
+                const confirmBtn = document.getElementById('event-detail-confirm');
+                confirmBtn.onclick = () => {
+                    applyImpactToUIAndData(impacts);
+                    closeModal('event-detail-modal');
+                    showNotification('影响已应用', 'success');
+                };
+            });
+        });
+        
+        function renderRelationships() {
+            const container = document.querySelector('#relationships-modal .relationship-network');
+            if (!container) return;
+            container.innerHTML = '';
+            const saved = localStorage.getItem('gameData');
+            const data = saved ? JSON.parse(saved) : null;
+            const nodes = [];
+            if (data?.relationships) {
+                const rel = data.relationships;
+                nodes.push({ key: 'protagonist', name: data.protagonist.name, intimacy: 100, x: 170, y: 170 });
+                nodes.push({ key: 'father', name: rel.father?.name ?? '父亲', intimacy: rel.father?.intimacy ?? 60, x: 50, y: 40 });
+                nodes.push({ key: 'mother', name: rel.mother?.name ?? '母亲', intimacy: rel.mother?.intimacy ?? 75, x: 290, y: 40 });
+                nodes.push({ key: 'eldestSister', name: rel.eldestSister?.name ?? '大姐', intimacy: rel.eldestSister?.intimacy ?? 55, x: 40, y: 300 });
+                nodes.push({ key: 'secondSister', name: rel.secondSister?.name ?? '二姐', intimacy: rel.secondSister?.intimacy ?? 50, x: 300, y: 300 });
+                nodes.push({ key: 'fourthSister', name: rel.fourthSister?.name ?? '四妹', intimacy: rel.fourthSister?.intimacy ?? 45, x: 20, y: 170 });
+                nodes.push({ key: 'fifthSister', name: rel.fifthSister?.name ?? '五妹', intimacy: rel.fifthSister?.intimacy ?? 50, x: 320, y: 170 });
+            }
+            nodes.forEach(n => {
+                const el = document.createElement('div');
+                el.className = 'relationship-node';
+                el.style.left = `${n.x}px`;
+                el.style.top = `${n.y}px`;
+                el.innerHTML = `<div class="text-center"><div class="font-bold">${n.name}</div><div class="text-xs text-muted mt-1">好感：${n.intimacy}</div></div>`;
+                container.appendChild(el);
+                // draw line to protagonist
+                if (n.key !== 'protagonist') {
+                    const line = document.createElement('div');
+                    line.className = 'relationship-line';
+                    const x1 = n.x + 30, y1 = n.y + 30;
+                    const x2 = 170 + 30, y2 = 170 + 30;
+                    const dx = x2 - x1, dy = y2 - y1;
+                    const length = Math.sqrt(dx*dx + dy*dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    line.style.left = `${x1}px`;
+                    line.style.top = `${y1}px`;
+                    line.style.width = `${length}px`;
+                    line.style.transform = `rotate(${angle}deg)`;
+                    container.appendChild(line);
+                }
+            });
+        }
+        
+        // 人物互动事件选择影响
+        document.querySelectorAll('#interaction-events-container .bg-white').forEach(card => {
+            const title = card.querySelector('h3')?.textContent?.trim() ?? '';
+            const buttons = card.querySelectorAll('.btn-ancient');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const choice = button.textContent.trim();
+                    const saved = localStorage.getItem('gameData');
+                    const data = saved ? JSON.parse(saved) : null;
+                    let impacts = [];
+                    if (title.includes('二姐') && data) {
+                        if (!data.relationships) data.relationships = {};
+                        const key = 'secondSister';
+                        const name = data.relationships[key]?.name ?? '二姐';
+                        const delta = choice === '答应' ? +5 : -2;
+                        impacts = [{ type: 'relationship', key, delta }];
+                        data.relationships[key] = { name, intimacy: clamp((data.relationships[key]?.intimacy ?? 0) + delta, 0, 100) };
+                    } else if (title.includes('父亲') && data) {
+                        const delta = choice === '如实回答' ? +3 : -3;
+                        impacts = [{ type: 'skill', key: 'etiquette', delta }];
+                    }
+                    applyImpactToUIAndData(impacts);
+                    showNotification(`已处理互动选择：“${choice}”`, 'success');
+                });
+            });
+        });
+        
+        // 书信阅读
+        const letters = [
+            { title: '大姐的信', content: '妹妹，我在夫家一切都好。近日忙于照看外甥，甚是充实。盼来春得以归省，与父母姐妹叙谈。——大姐' },
+            { title: '父亲的信', content: '婉儿，近日学业可勤？为父望汝持之以恒，切勿懈怠。待来月考校汝所学。——父' }
+        ];
+        document.querySelectorAll('#core-events-container .btn-ancient'); // 保持查询以确保节点已渲染
+        document.querySelectorAll('.ancient-card:nth-child(3) .space-y-3 .bg-white .text-primary').forEach(() => {}); // 占位，避免选择器冲突
+        document.querySelectorAll('#game .unused'); // 无效果，仅占位
+        document.querySelectorAll('#letters-container button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const card = btn.closest('.bg-white');
+                const title = card.querySelector('h3')?.textContent?.trim() ?? '';
+                const letter = letters.find(l => l.title === title);
+                document.getElementById('letter-title').textContent = letter?.title ?? '来信';
+                document.getElementById('letter-content').textContent = letter?.content ?? '这是一封简短的来信。';
+                openModal('letter-modal');
+            });
+        });
+        
+        // 保存手记
+        document.getElementById('save-journal-btn').addEventListener('click', () => {
+            const journalText = document.getElementById('journal-text').value;
+            if (journalText.trim() === '') {
+                showNotification('手记内容不能为空', 'warning');
+                return;
+            }
+            
+            // 保存到手记
+            // 这里可以添加保存逻辑
+            
+            // 显示成功通知
+            showNotification('手记保存成功', 'success');
+            
+            // 清空输入框
+            document.getElementById('journal-text').value = '';
+        });
+        
+        // 推进下一年
+        document.getElementById('next-year-btn').addEventListener('click', () => {
+            // 显示加载状态
+            const button = document.getElementById('next-year-btn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i><span>处理中...</span>';
+            button.disabled = true;
+            
+            // 模拟处理时间
+            setTimeout(() => {
+                // 更新游戏时间
+                const currentYear = document.getElementById('game-year');
+                const currentSeason = document.getElementById('game-season');
+                const currentAge = document.getElementById('game-age');
+                
+                // 简单的季节和年份更新逻辑
+                const seasons = ['春季', '夏季', '秋季', '冬季'];
+                const seasonClassMap = { '春季': 'spring', '夏季': 'summer', '秋季': 'autumn', '冬季': 'winter' };
+                const currentSeasonText = currentSeason.textContent;
+                const currentSeasonIndex = seasons.indexOf(currentSeasonText);
+                
+                if (currentSeasonIndex === 3) {
+                    // 如果是冬季，更新到下一年的春季
+                    const yearNum = parseInt(currentYear.dataset.yearNumber || '1', 10) + 1;
+                    currentYear.dataset.yearNumber = String(yearNum);
+                    currentYear.textContent = yearNum === 1 ? '元年' : `${yearNum}年`;
+                    const newSeason = '春季';
+                    currentSeason.textContent = newSeason;
+                    
+                    // 年龄增加一岁
+                    const ageNum = parseInt(currentAge.textContent);
+                    currentAge.textContent = `${ageNum + 1}岁`;
+                    
+                    // 更新背景颜色以反映季节变化
+                    document.body.className = document.body.className.replace(/season-\w+/, `season-${seasonClassMap[newSeason]}`);
+                } else {
+                    // 更新到下一个季节
+                    const newSeason = seasons[currentSeasonIndex + 1];
+                    currentSeason.textContent = newSeason;
+                    
+                    // 更新背景颜色以反映季节变化
+                    document.body.className = document.body.className.replace(/season-\w+/, `season-${seasonClassMap[newSeason]}`);
+                }
+                
+                // 生成新的事件
+                generateNewEvents();
+                
+                // 恢复按钮状态
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                // 显示通知
+                showNotification('时间推进成功', 'success');
+            }, 1500);
+        });
+        
+        async function generateNewEvents() {
+            const saved = localStorage.getItem('gameData');
+            const data = saved ? JSON.parse(saved) : null;
+            const cfg = await readApiConfig();
+            const ctx = {
+                dynasty: document.getElementById('game-reign-year').textContent,
+                yearNum: document.getElementById('game-year').dataset.yearNumber || '1',
+                season: document.getElementById('game-season').textContent,
+                name: data?.protagonist?.name || '主角',
+                rank: data?.protagonist?.rank || '',
+                city: data?.family?.city || '',
+                skills: data?.protagonist?.skills || {}
+            };
+            const prompt = `请基于${ctx.dynasty}${ctx.yearNum}年，${ctx.season}，为${ctx.name}（${ctx.rank}）生成3条贴近古风宅院生活的年度核心事件，每条含title与description，JSON输出。可以结合其技能倾向：${JSON.stringify(ctx.skills)}`;
+            let events;
+            try {
+                if (cfg) {
+                    events = await fetchAIEvents(prompt, cfg);
+                } else {
+                    events = localEventsFallback(ctx);
+                }
+            } catch {
+                events = localEventsFallback(ctx);
+            }
+            renderEventsToContainer(events);
+            showNotification('新的事件已经生成', 'info');
+        }
+        
+        // 初始化游戏数据
+        function initGameData() {
+            // 从本地存储加载游戏数据
+            const savedGameData = localStorage.getItem('gameData');
+            
+            if (savedGameData) {
+                const gameData = JSON.parse(savedGameData);
+                
+                // 更新游戏界面显示
+                document.getElementById('game-reign-year').textContent = gameData.family.reignYear;
+                const gameYearEl = document.getElementById('game-year');
+                gameYearEl.textContent = '元年'; // 简化处理
+                gameYearEl.dataset.yearNumber = '1';
+                document.getElementById('game-season').textContent = '春季'; // 简化处理
+                document.getElementById('game-age').textContent = `${gameData.protagonist.age}岁`;
+                
+                document.getElementById('protagonist-name').textContent = gameData.protagonist.name;
+                document.getElementById('protagonist-rank').textContent = gameData.protagonist.rank;
+                document.getElementById('protagonist-looks').textContent = gameData.protagonist.looks;
+                document.getElementById('protagonist-personality').textContent = gameData.protagonist.personality;
+                
+                // 更新技能值
+                document.getElementById('skill-sewing-value').textContent = gameData.protagonist.skills.sewing;
+                document.getElementById('skill-sewing-bar').style.width = `${gameData.protagonist.skills.sewing}%`;
+                
+                document.getElementById('skill-cooking-value').textContent = gameData.protagonist.skills.cooking;
+                document.getElementById('skill-cooking-bar').style.width = `${gameData.protagonist.skills.cooking}%`;
+                
+                document.getElementById('skill-poetry-value').textContent = gameData.protagonist.skills.poetry;
+                document.getElementById('skill-poetry-bar').style.width = `${gameData.protagonist.skills.poetry}%`;
+                
+                document.getElementById('skill-calligraphy-value').textContent = gameData.protagonist.skills.calligraphy;
+                document.getElementById('skill-calligraphy-bar').style.width = `${gameData.protagonist.skills.calligraphy}%`;
+                
+                document.getElementById('skill-music-value').textContent = gameData.protagonist.skills.music;
+                document.getElementById('skill-music-bar').style.width = `${gameData.protagonist.skills.music}%`;
+                
+                document.getElementById('skill-etiquette-value').textContent = gameData.protagonist.skills.etiquette;
+                document.getElementById('skill-etiquette-bar').style.width = `${gameData.protagonist.skills.etiquette}%`;
+                
+                // 更新属性值
+                document.getElementById('health-value').textContent = gameData.protagonist.attributes.health;
+                document.getElementById('health-bar').style.width = `${gameData.protagonist.attributes.health}%`;
+                
+                // 显示加载成功通知
+                showNotification('游戏数据加载成功', 'success');
+            } else {
+                // 如果没有保存的游戏数据，显示错误通知
+                showNotification('未找到游戏数据，请先创建角色', 'error');
+                
+                // 延迟跳转到角色创建页面
+                setTimeout(() => {
+                    window.location.href = 'create-role.html';
+                }, 2000);
+            }
+        }
+        
+        // 页面加载时初始化游戏数据
+        window.addEventListener('load', initGameData);
+    </script>
+</body>
+</html>
