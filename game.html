@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏主界面 - 吾家有女初长成</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js(如后续有关系图/统计需求可用) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary:'#D4A574',secondary:'#E6B888',accent:'#C8553D',light:'#F9F3E9',dark:'#5D4037',
+                        muted:'#A1887F',success:'#4CAF50',warning:'#FFC107',danger:'#F44336',info:'#2196F3',love:'#E91E63'
+                    },
+                    fontFamily:{ sans:['Noto Sans SC','sans-serif'],serif:['Noto Serif SC','serif'] }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow { text-shadow:2px 2px 4px rgba(0,0,0,.3); }
+            .nav-item { @apply relative px-4 py-2 text-dark hover:text-accent transition-colors duration-300;}
+            .nav-item::after {content:''; @apply absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300;}
+            .nav-item:hover::after { @apply w-full; }
+            .btn-primary { @apply bg-accent text-white px-4 py-2 rounded-lg shadow hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;}
+            .btn-secondary{ @apply bg-primary text-dark px-4 py-2 rounded-lg shadow hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;}
+            .card { @apply bg-white bg-opacity-90 rounded-xl shadow-lg p-4 transition-all duration-300 hover:shadow-xl;}
+            .attribute-bar { @apply h-2 bg-gray-200 rounded-full overflow-hidden;}
+            .attribute-fill { @apply h-full transition-all duration-500;}
+            .event-card { @apply bg-white rounded-lg shadow p-4 mb-3 cursor-pointer transition-all duration-300 hover:shadow-lg;}
+            .tab-button {@apply px-4 py-2 text-dark border-b-2 border-transparent hover:text-accent transition-colors duration-300;}
+            .tab-button.active { @apply text-accent border-accent;}
+            .tab-content{ @apply min-h-[480px]; }
+        }
+    </style>
+</head>
+<body class="bg-light font-serif text-dark min-h-screen bg-cover bg-fixed" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/360095ab1196484cb2b634e94bf4427b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707');">
+
+    <!-- 顶部时间/菜单栏 -->
+    <header class="bg-light bg-opacity-90 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div>
+                    <a href="index.html">
+                        <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/83fdc46a4e064461ab31728abbf3934b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" class="h-10 mr-3 inline" alt="Logo"/>
+                    </a>
+                </div>
+                <!-- 时间信息（动态填充） -->
+                <div class="flex items-center space-x-6">
+                    <div><div class="text-sm text-muted">朝代</div><div id="dynasty" class="font-bold">明朝</div></div>
+                    <div><div class="text-sm text-muted">年号</div><div id="year-name" class="font-bold">永乐</div></div>
+                    <div><div class="text-sm text-muted">年份</div><div id="year" class="font-bold">元年</div></div>
+                    <div><div class="text-sm text-muted">年龄</div><div id="age" class="font-bold">16岁</div></div>
+                </div>
+                <!-- 菜单按钮 -->
+                <div>
+                    <button id="menu-button" class="text-dark text-xl hover:text-accent transition-colors"><i class="fa fa-bars"></i></button>
+                </div>
+            </div>
+        </div>
+        <!-- 菜单下拉 -->
+        <div id="game-menu" class="hidden bg-white shadow-lg absolute right-4 top-16 rounded-lg overflow-hidden z-50 w-48">
+            <ul>
+                <li><a href="#" id="save-game" class="block px-4 py-2 hover:bg-light transition-colors"><i class="fa fa-save mr-2"></i>保存游戏</a></li>
+                <li><a href="#" id="load-game" class="block px-4 py-2 hover:bg-light transition-colors"><i class="fa fa-folder-open mr-2"></i>读取存档</a></li>
+                <li><a href="#" id="settings" class="block px-4 py-2 hover:bg-light transition-colors"><i class="fa fa-cog mr-2"></i>设置</a></li>
+                <li><a href="index.html" class="block px-4 py-2 hover:bg-light transition-colors"><i class="fa fa-sign-out mr-2"></i>返回首页</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- ====== 左栏: 信息&技能 ====== -->
+            <aside class="lg:col-span-3 space-y-6">
+                <!-- 个人信息卡片 -->
+                <div class="card">
+                    <h2 class="text-xl font-bold mb-4 text-center">个人信息</h2>
+                    <div class="flex flex-col items-center mb-4">
+                        <div class="w-24 h-24 rounded-full overflow-hidden mb-2 border-4 border-primary">
+                            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" class="w-full h-full" alt="头像" id="avatar"/>
+                        </div>
+                        <h3 id="character-name" class="text-lg font-bold">李昭华</h3>
+                        <p class="text-sm text-muted" id="character-desc">李家大小姐</p>
+                    </div>
+                    <div class="space-y-3" id="attribute-block">
+                        <!-- 属性条由JS动态填充 -->
+                    </div>
+                </div>
+                <!-- 技能面板 -->
+                <div class="card">
+                    <h2 class="text-xl font-bold mb-4 text-center">技能面板</h2>
+                    <div class="space-y-3" id="skill-block">
+                        <!-- 技能内容由JS动态填充 -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ====== 中栏: 主要面板 ====== -->
+            <section class="lg:col-span-6 space-y-6">
+                <!-- Tabs -->
+                <div class="bg-white bg-opacity-90 rounded-t-xl shadow-lg p-2 flex">
+                    <button class="tab-button active flex-1 text-center" data-tab="events">年度事件</button>
+                    <button class="tab-button flex-1 text-center" data-tab="interactions">人物互动</button>
+                    <button class="tab-button flex-1 text-center" data-tab="family">家庭动态</button>
+                    <button class="tab-button flex-1 text-center" data-tab="notes">我的手记</button>
+                </div>
+                <!-- Tab内容区 -->
+                <div class="bg-white bg-opacity-90 rounded-b-xl shadow-lg p-4">
+                    <!-- 年度事件 -->
+                    <div id="events-tab" class="tab-content">
+                        <!-- 事件卡片由JS动态生成 -->
+                        <div class="event-card border-l-4 border-info" title="点击查看详情">示例：春日诗会……（点击生成AI年度大事件）</div>
+                        <button class="btn-primary mt-2" id="events-generate-btn"><i class="fa fa-magic mr-2"></i>AI生成下一年度大事件</button>
+                    </div>
+                    <!-- 人物互动 -->
+                    <div id="interactions-tab" class="tab-content hidden">
+                        <div class="event-card" title="点击查看详情">示例互动：姐妹对话……（点击生成AI互动）</div>
+                        <button class="btn-primary mt-2" id="interact-generate-btn"><i class="fa fa-user-friends mr-2"></i>AI生成互动</button>
+                    </div>
+                    <!-- 家庭动态 -->
+                    <div id="family-tab" class="tab-content hidden">
+                        <div class="event-card" title="点击生成家族大事">示例家族动态……（点击生成AI家庭事件）</div>
+                        <button class="btn-primary mt-2" id="family-generate-btn"><i class="fa fa-home mr-2"></i>AI生成家庭动态</button>
+                    </div>
+                    <!-- 我的手记 -->
+                    <div id="notes-tab" class="tab-content hidden">
+                        <div class="mb-4">
+                            <textarea id="note-input" class="w-full h-28 p-3 rounded-lg border border-gray-300" placeholder="记录你的年度心情/感悟……"></textarea>
+                        </div>
+                        <div class="flex mb-4">
+                            <button class="btn-secondary mr-2" id="note-add-btn"><i class="fa fa-plus mr-1"></i>添加</button>
+                            <button class="btn-secondary mr-2" id="note-edit-btn"><i class="fa fa-pencil mr-1"></i>修改</button>
+                            <button class="btn-secondary" id="note-delete-btn"><i class="fa fa-trash mr-1"></i>删除</button>
+                        </div>
+                        <ul id="notes-history" class="space-y-2">
+                            <!-- 历史手记由JS生成 -->
+                        </ul>
+                    </div>
+                </div>
+                <!-- 年份推进&重开 -->
+                <div class="flex justify-between items-center mt-6">
+                    <div>
+                        <button class="btn-secondary mr-3" id="history-btn"><i class="fa fa-calendar mr-1"></i>事件回顾</button>
+                        <button class="btn-secondary mr-3" id="assetskills-btn"><i class="fa fa-chart-line mr-1"></i>资产技能</button>
+                        <button class="btn-secondary" id="relationship-btn"><i class="fa fa-sitemap mr-1"></i>人物关系</button>
+                    </div>
+                    <div>
+                        <button class="btn-primary mr-3" id="advance-year-btn"><i class="fa fa-forward mr-1"></i>推进一年</button>
+                        <button class="btn-warning" id="restart-btn"><i class="fa fa-refresh mr-1"></i>重开新人生</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== 右侧: 家宅地图/书信/存档等 ===== -->
+            <aside class="lg:col-span-3 space-y-6">
+                <!-- 家宅地图区域（演示区块） -->
+                <div class="card relative">
+                    <h2 class="text-xl font-bold mb-3 text-center">家宅地图</h2>
+                    <div class="relative w-full h-52 bg-[url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/360095ab1196484cb2b634e94bf4427b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707')] bg-cover bg-center rounded-lg">
+                        <button class="map-area absolute left-3 top-3 px-2 py-1 bg-accent bg-opacity-80 text-white text-xs rounded" style="width:56px;" data-name="闺房">闺房</button>
+                        <button class="map-area absolute right-4 top-10 px-2 py-1 bg-secondary text-dark text-xs rounded" style="width:52px;" data-name="书房">书房</button>
+                        <button class="map-area absolute left-16 bottom-6 px-2 py-1 bg-success text-white text-xs rounded" style="width:56px;" data-name="后花园">后花园</button>
+                        <button class="map-area absolute right-4 bottom-5 px-2 py-1 bg-warning text-dark text-xs rounded" style="width:40px;" data-name="厨房">厨房</button>
+                    </div>
+                </div>
+                <!-- 书信箱 -->
+                <div class="card">
+                    <h2 class="text-xl font-bold mb-4 text-center">书信箱</h2>
+                    <div class="flex justify-center mb-2">
+                        <button class="btn-secondary" id="mailbox-btn"><i class="fa fa-envelope mr-2"></i>查看来信</button>
+                    </div>
+                    <ul id="mail-list" class="space-y-2">
+                        <!-- 静态or动态书信插槽 -->
+                        <li>暂无书信，AI生成后展示</li>
+                    </ul>
+                </div>
+                <!-- 存档读档与设置 -->
+                <div class="card">
+                    <h2 class="text-xl font-bold mb-4 text-center">存档管理</h2>
+                    <div class="flex flex-col space-y-2">
+                        <button class="btn-secondary" id="save-game-btn"><i class="fa fa-save mr-2"></i>保存当前进度</button>
+                        <button class="btn-secondary" id="load-game-btn"><i class="fa fa-folder-open mr-2"></i>读取存档</button>
+                        <button class="btn-secondary" id="export-save-btn"><i class="fa fa-download mr-2"></i>导出存档</button>
+                        <button class="btn-secondary" id="import-save-btn"><i class="fa fa-upload mr-2"></i>导入存档</button>
+                        <button class="btn-secondary" id="settings-btn"><i class="fa fa-cog mr-2"></i>设置</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+    <!-- 通用全局loading/弹窗已由script.js生成，无需额外代码 -->
+    <script src="api.js"></script>
+    <script src="save-load.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

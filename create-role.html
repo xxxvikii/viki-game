@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>角色创建 - 吾家有女初长成</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary:'#D4A574',secondary:'#E6B888',accent:'#C8553D',light:'#F9F3E9',dark:'#5D4037',muted:'#A1887F' },
+                    fontFamily:{ sans:['Noto Sans SC','sans-serif'],serif:['Noto Serif SC','serif'] }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow { text-shadow:2px 2px 4px rgba(0,0,0,.3); }
+            .nav-item { @apply relative px-4 py-2 text-dark hover:text-accent transition-colors duration-300;}
+            .nav-item::after {content:''; @apply absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300;}
+            .nav-item:hover::after { @apply w-full; }
+            .btn-primary { @apply bg-accent text-white px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;}
+            .btn-secondary{ @apply bg-primary text-dark px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;}
+            .card { @apply bg-white bg-opacity-90 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl;}
+        }
+    </style>
+</head>
+<body class="bg-light font-serif text-dark min-h-screen bg-cover bg-fixed" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/360095ab1196484cb2b634e94bf4427b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707');">
+    <!-- 顶部导航栏 -->
+    <header class="bg-light bg-opacity-90 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="index.html">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/83fdc46a4e064461ab31728abbf3934b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" class="h-10" alt="logo"/>
+                </a>
+            </div>
+            <nav class="hidden md:flex space-x-2">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="index.html#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="index.html#author" class="nav-item">作者信息</a>
+            </nav>
+            <button id="mobile-menu-button" class="md:hidden text-dark text-2xl"><i class="fa fa-bars"></i></button>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-light shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-2">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="index.html#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="index.html#author" class="nav-item">作者信息</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-accent mb-2">角色创建</h1>
+            <p class="text-lg text-gray-700">随机生成你的古代身份，开启人生之旅</p>
+        </div>
+
+        <!-- 一键随机 -->
+        <div class="flex justify-center mb-8">
+            <button id="randomize-all" class="btn-primary flex items-center"><i class="fa fa-random mr-2"></i>重新随机所有</button>
+        </div>
+
+        <!-- 家族设定 -->
+        <div class="card mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-dark">家族设定</h2>
+                <button id="randomize-family" class="btn-secondary py-1 px-3 text-sm"><i class="fa fa-refresh mr-1"></i>重新随机</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-light p-4 rounded-lg"><h3 class="text-sm text-muted mb-1">朝代</h3><p id="dynasty" class="text-lg font-bold">明朝</p></div>
+                <div class="bg-light p-4 rounded-lg"><h3 class="text-sm text-muted mb-1">年号</h3><p id="year-name" class="text-lg font-bold">永乐</p></div>
+                <div class="bg-light p-4 rounded-lg"><h3 class="text-sm text-muted mb-1">姓氏</h3><p id="family-name" class="text-lg font-bold">李</p></div>
+                <div class="bg-light p-4 rounded-lg"><h3 class="text-sm text-muted mb-1">身份</h3><p id="family-status" class="text-lg font-bold">书香门第</p></div>
+                <div class="bg-light p-4 rounded-lg"><h3 class="text-sm text-muted mb-1">资产</h3><p id="family-assets" class="text-lg font-bold">中等</p></div>
+                <div class="bg-light p-4 rounded-lg"><h3 class="text-sm text-muted mb-1">家风</h3><p id="family-style" class="text-lg font-bold">诗书传家</p></div>
+            </div>
+        </div>
+
+        <!-- 主角选择 -->
+        <div class="card mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-dark">选择主角</h2>
+                <button id="randomize-character" class="btn-secondary py-1 px-3 text-sm"><i class="fa fa-refresh mr-1"></i>重新随机</button>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                <div class="character-card selected" data-index="0"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" class="w-full h-28 object-cover"/><div class="p-3 bg-white"><h3 class="font-bold">李昭华</h3><p class="text-sm text-muted">大姐 · 16岁</p></div></div>
+                <div class="character-card" data-index="1"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" class="w-full h-28 object-cover"/><div class="p-3 bg-white"><h3 class="font-bold">李昭仪</h3><p class="text-sm text-muted">二姐 · 15岁</p></div></div>
+                <div class="character-card" data-index="2"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" class="w-full h-28 object-cover"/><div class="p-3 bg-white"><h3 class="font-bold">李昭容</h3><p class="text-sm text-muted">三姐 · 14岁</p></div></div>
+                <div class="character-card" data-index="3"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" class="w-full h-28 object-cover"/><div class="p-3 bg-white"><h3 class="font-bold">李昭媛</h3><p class="text-sm text-muted">四姐 · 13岁</p></div></div>
+                <div class="character-card" data-index="4"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" class="w-full h-28 object-cover"/><div class="p-3 bg-white"><h3 class="font-bold">李昭宁</h3><p class="text-sm text-muted">五妹 · 12岁</p></div></div>
+            </div>
+            <div id="character-details" class="bg-light p-6 rounded-lg">
+                <!-- 详情由JS自动渲染 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><h3 class="text-xl font-bold mb-4">李昭华</h3><div class="space-y-3">……</div></div>
+                    <div><h3 class="text-xl font-bold mb-4">性格与技能</h3><div class="space-y-3">……</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心NPC -->
+        <div class="card mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-dark">核心NPC</h2>
+                <button id="randomize-npc" class="btn-secondary py-1 px-3 text-sm"><i class="fa fa-refresh mr-1"></i>重新随机</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 父母 -->
+                <div class="bg-light p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">父母</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="w-16 h-16 rounded-full overflow-hidden mr-4 flex-shrink-0"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" /></div>
+                            <div>
+                                <h4 class="font-bold">李老爷</h4>
+                                <p class="text-sm text-muted">45岁 · 翰林院编修</p>
+                                <p class="text-sm mt-1">性格严谨，学识渊博，对子女要求严格但关爱有加。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-16 h-16 rounded-full overflow-hidden mr-4 flex-shrink-0"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" /></div>
+                            <div>
+                                <h4 class="font-bold">王夫人</h4>
+                                <p class="text-sm text-muted">40岁 · 出身官宦之家</p>
+                                <p class="text-sm mt-1">温柔贤惠，持家有道，擅长刺绣和诗词，对女儿们悉心教导。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 姐妹 -->
+                <div class="bg-light p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">姐妹</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center"><div class="w-12 h-12 rounded-full overflow-hidden mr-3 flex-shrink-0"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" /></div><div><h4 class="font-bold">李昭仪</h4><p class="text-sm text-muted">15岁 · 活泼开朗，擅长舞蹈</p></div></div>
+                        <div class="flex items-center"><div class="w-12 h-12 rounded-full overflow-hidden mr-3 flex-shrink-0"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" /></div><div><h4 class="font-bold">李昭容</h4><p class="text-sm text-muted">14岁 · 安静内向，酷爱读书</p></div></div>
+                        <div class="flex items-center"><div class="w-12 h-12 rounded-full overflow-hidden mr-3 flex-shrink-0"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" /></div><div><h4 class="font-bold">李昭媛</h4><p class="text-sm text-muted">13岁 · 心灵手巧，擅长女红</p></div></div>
+                        <div class="flex items-center"><div class="w-12 h-12 rounded-full overflow-hidden mr-3 flex-shrink-0"><img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/25f6d868340543d188f2d150151b7263~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" /></div><div><h4 class="font-bold">李昭宁</h4><p class="text-sm text-muted">12岁 · 天真可爱，喜欢撒娇</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="flex justify-center space-x-4">
+            <button id="back-to-home" class="btn-secondary"><i class="fa fa-arrow-left mr-2"></i>返回首页</button>
+            <button id="start-game" class="btn-primary"><i class="fa fa-play mr-2"></i>开始游戏</button>
+        </div>
+    </main>
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏说明 - 吾家有女初长成</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {primary:'#D4A574',secondary:'#E6B888',accent:'#C8553D',light:'#F9F3E9',dark:'#5D4037',muted:'#A1887F'},
+                    fontFamily: {sans: ['Noto Sans SC', 'sans-serif'], serif:['Noto Serif SC','serif']}
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .nav-item { @apply relative px-4 py-2 text-dark hover:text-accent transition-colors duration-300;}
+            .nav-item::after {content:'';@apply absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300;}
+            .nav-item:hover::after { @apply w-full;}
+            .btn-primary { @apply bg-accent text-white px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;}
+            .btn-secondary{ @apply bg-primary text-dark px-6 py-3 rounded-lg shadow-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105;}
+            .card { @apply bg-white bg-opacity-90 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl;}
+            .section-title { @apply text-2xl font-bold mb-4 text-accent border-b-2 border-accent pb-2 inline-block;}
+            .toc-item { @apply py-2 px-4 hover:bg-light rounded-lg transition-colors duration-300 cursor-pointer;}
+            .toc-item.active { @apply bg-light font-bold text-accent;}
+        }
+    </style>
+</head>
+<body class="bg-light font-serif text-dark min-h-screen bg-cover bg-fixed" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/360095ab1196484cb2b634e94bf4427b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707');">
+    <header class="bg-light bg-opacity-90 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="index.html">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/83fdc46a4e064461ab31728abbf3934b~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=20260203171430D707" class="h-10" alt="logo"/>
+                </a>
+            </div>
+            <nav class="hidden md:flex space-x-2">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="index.html#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="index.html#author" class="nav-item">作者信息</a>
+            </nav>
+            <button id="mobile-menu-button" class="md:hidden text-dark text-2xl"><i class="fa fa-bars"></i></button>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-light shadow-lg absolute w-full">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-2">
+                <a href="index.html" class="nav-item">首页</a>
+                <a href="index.html#about" class="nav-item">游戏介绍</a>
+                <a href="api-config.html" class="nav-item">API接口配置</a>
+                <a href="index.html#author" class="nav-item">作者信息</a>
+            </div>
+        </div>
+    </header>
+    <main class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-accent mb-2">游戏说明</h1>
+            <p class="text-lg">了解游戏的核心设定、玩法规则和操作指南</p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-1">
+                <div class="card sticky top-24">
+                    <h2 class="text-xl font-bold mb-4 text-center">目录</h2>
+                    <div class="space-y-1">
+                        <div class="toc-item active" data-section="core-setting"><i class="fa fa-book mr-2"></i>核心设定</div>
+                        <div class="toc-item" data-section="game-rules"><i class="fa fa-gavel mr-2"></i>玩法规则</div>
+                        <div class="toc-item" data-section="interface-guide"><i class="fa fa-desktop mr-2"></i>界面操作指南</div>
+                        <div class="toc-item" data-section="npc-interaction"><i class="fa fa-users mr-2"></i>NPC互动逻辑</div>
+                        <div class="toc-item" data-section="skill-system"><i class="fa fa-graduation-cap mr-2"></i>技能系统</div>
+                        <div class="toc-item" data-section="event-system"><i class="fa fa-calendar mr-2"></i>事件系统</div>
+                        <div class="toc-item" data-section="save-load"><i class="fa fa-folder mr-2"></i>存档读档</div>
+                        <div class="toc-item" data-section="api-usage"><i class="fa fa-cogs mr-2"></i>API使用指南</div>
+                        <div class="toc-item" data-section="faq"><i class="fa fa-question-circle mr-2"></i>常见问题</div>
+                    </div>
+                </div>
+            </div>
+            <div class="lg:col-span-3 space-y-8">
+                <section id="core-setting" class="card">
+                    <h2 class="section-title">核心设定</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-bold mb-2">游戏背景</h3>
+                            <p>《吾家有女初长成》是一款以古代/民国初期为背景的文字人生模拟游戏。随机家族和角色属性，每一局都有新体验。</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-2">家族/角色/关系/NPC</h3>
+                            <ul class="list-disc pl-5">
+                                <li>家族：包含朝代/年号/姓氏/身份/家风等</li>
+                                <li>角色：五位主角姐妹，每位年龄/技能/性格/外貌个性不同</li>
+                                <li>NPC：父母/姐妹/亲友/婚恋/仆人等均具备互动性</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <section id="game-rules" class="card">
+                    <h2 class="section-title">玩法规则</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <h3 class="font-bold mb-2">年度推进</h3>
+                            <ul class="list-disc pl-5">
+                                <li>每回合=一年，年度更新大事件/属性成长</li>
+                                <li>角色12岁起步，每年成长，寿终正寝为止</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-2">主要玩法</h3>
+                            <ul class="list-disc pl-5">
+                                <li>自由选择事件分支，影响技能/属性/人物关系</li>
+                                <li>每年可与家人/NPC/姐妹互动</li>
+                                <li>存档/读档/重开人生 无限轮回</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <section id="interface-guide" class="card">
+                    <h2 class="section-title">界面操作指南</h2>
+                    <div class="space-y-2">
+                        <div>顶栏：时间-年龄信息，菜单（存档/读档/设置/返回）</div>
+                        <div>左栏：人物信息+技能成长</div>
+                        <div>中栏：核心游戏流程与年度事件/互动</div>
+                        <div>右栏：地图/书信/存档功能</div>
+                        <div>下部操作区：推进一年、回顾/资产/关系/重开等全功能按钮</div>
+                    </div>
+                </section>
+                <section id="npc-interaction" class="card">
+                    <h2 class="section-title">NPC互动逻辑</h2>
+                    <p>NPC具有“记忆/好感/性格”，可自主成长，互动后好感变化/影响剧情发展。</p>
+                </section>
+                <section id="skill-system" class="card">
+                    <h2 class="section-title">技能系统</h2>
+                    <ul class="list-disc pl-5">
+                        <li>技能分等级：初学、入门、熟练、精通、大师</li>
+                        <li>每年训练和事件可提升</li>
+                    </ul>
+                </section>
+                <section id="event-system" class="card">
+                    <h2 class="section-title">事件系统</h2>
+                    <p>年度/家庭/社交/技能/婚恋/特殊等事件每年更新，由AI生成分支剧情。</p>
+                </section>
+                <section id="save-load" class="card">
+                    <h2 class="section-title">存档读档</h2>
+                    <ul class="list-disc pl-5">
+                        <li>多存档管理（覆盖/删除/命名）</li>
+                        <li>全局状态序列化，读档后可恢复全部内容</li>
+                    </ul>
+                </section>
+                <section id="api-usage" class="card">
+                    <h2 class="section-title">API使用指南</h2>
+                    <ul class="list-disc pl-5">
+                        <li>支持多AI服务商，前端直接配置密钥及参数，无需后端</li>
+                        <li>API密钥支持实时验证，体验高效无后门</li>
+                        <li>连接失败时自动用模拟内容回退</li>
+                    </ul>
+                </section>
+                <section id="faq" class="card">
+                    <h2 class="section-title">常见问题</h2>
+                    <ul class="list-disc pl-5">
+                        <li>Q: 没api密钥能玩吗？ A: 可以，使用内置模拟AI内容模式，不影响所有功能。</li>
+                        <li>Q: 存档会丢失吗？A: 存于浏览器本地，清浏览器数据后会丢，建议及时导出。</li>
+                        <li>Q: 网页无法访问API接口？A: 国内部分云端需科学上网或用模拟AI，设置里可换API。</li>
+                        <li>Q: 挂机无动画？A: 静态网页方案，动画偏弱，主打剧情文字。</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+    <footer class="bg-dark text-white py-6 px-4 mt-12">
+        <div class="container mx-auto max-w-5xl">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">吾家有女初长成</h3>
+                    <p class="text-gray-400">古风高自由度随机文字人生模拟器</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="index.html" class="text-gray-400 hover:text-white transition-colors">首页</a>
+                    <a href="index.html#about" class="text-gray-400 hover:text-white transition-colors">游戏介绍</a>
+                    <a href="api-config.html" class="text-gray-400 hover:text-white transition-colors">API接口配置</a>
+                    <a href="index.html#author" class="text-gray-400 hover:text-white transition-colors">作者信息</a>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2025 西一 版权所有</p>
+            </div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
